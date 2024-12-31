@@ -50,7 +50,7 @@ function Navbar() {
                             About
                         </Link>
                         <Link href="/" className="relative px-5 py-2 transition-colors duration-300 rounded-full hover:bg-white hover:shadow-md hover:text-black">
-                            Servicess
+                            Services
                         </Link>
                         <Link href="/" className="relative px-5 py-2 transition-colors duration-300 rounded-full hover:bg-white hover:shadow-md hover:text-black">
                             Doctors
