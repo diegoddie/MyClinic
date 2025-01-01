@@ -1,11 +1,18 @@
 import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
+    <>
+    <div className="flex flex-col md:min-h-screen">
       <Navbar />
-      <Footer />
+      <div className="px-5 lg:px-3">
+        <Hero />
+      </div>
+      
     </div>
+    <Footer />
+    </>
   );
 }
