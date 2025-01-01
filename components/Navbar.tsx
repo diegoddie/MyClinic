@@ -16,7 +16,7 @@ function Navbar() {
 
     return (
         <>
-            <nav className="w-full px-1 md:px-10 lg:px-16 py-4 sticky top-0 z-50 bg-white">
+            <nav className="w-full px-3 md:px-10 lg:px-16 py-4 sticky top-0 z-50 bg-white">
                 <div className="flex flex-wrap items-center justify-between">
                     {/* Logo */}
                     <Link href="/" className="flex items-center">

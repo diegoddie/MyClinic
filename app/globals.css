@@ -71,4 +71,6 @@ body {
   }
 }
 
-
+.logo-ticker-image{
+  @apply h-8 w-auto;
+}
