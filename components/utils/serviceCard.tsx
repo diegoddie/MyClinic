@@ -22,7 +22,7 @@ function ServiceCard({
   treatments,
 }: ServiceCardProps) {
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col h-full">
       <CardHeader className="space-y-4">
         <div className="flex items-center space-x-4">
           {icon}
@@ -44,7 +44,7 @@ function ServiceCard({
         </ul>
       </CardContent>
       <CardContent className="pt-0">
-        <Button className="w-full bg-primary text-white">Learn More</Button>
+        <Button className="w-full bg-primary text-white text-lg">Learn More</Button>
       </CardContent>
     </Card>
   );

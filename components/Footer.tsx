@@ -23,7 +23,7 @@ function Footer() {
                         <Link href='#about' className='transition-colors duration-300 hover:text-primary hover:font-semibold'>About</Link>
                         <Link href='#services' className='transition-colors duration-300 hover:text-primary hover:font-semibold'>Services</Link>
                         <Link href='#doctors' className='transition-colors duration-300 hover:text-primary hover:font-semibold'>Doctors</Link>
-                        <Link href='#contact' className='transition-colors duration-300 hover:text-primary hover:font-semibold'>Contact</Link>
+                        <Link href='#contacts' className='transition-colors duration-300 hover:text-primary hover:font-semibold'>Contacts</Link>
                     </div>
                 </div>
                 {/* Third Column: Contact Information */}

@@ -1,5 +1,7 @@
 import About from "@/components/About";
 import Achievements from "@/components/Achievements";
+import Contacts from "@/components/Contacts";
+import Doctors from "@/components/Doctors";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import Navbar from "@/components/Navbar";
@@ -14,6 +16,8 @@ export default function Home() {
       <Achievements />
       <About />
       <Services />
+      <Doctors />
+      <Contacts />
     </div>
     <Footer />
     </>

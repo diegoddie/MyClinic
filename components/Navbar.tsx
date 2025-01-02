@@ -56,8 +56,8 @@ function Navbar() {
                             <Link href="#doctors" className="relative px-5 py-1 transition-colors duration-300 rounded-full hover:bg-background hover:shadow-md hover:text-secondary">
                                 Doctors
                             </Link>
-                            <Link href="#contact" className="relative px-5 py-1 transition-colors duration-300 rounded-full hover:bg-background hover:shadow-md hover:text-secondary">
-                                Contact
+                            <Link href="#contacts" className="relative px-5 py-1 transition-colors duration-300 rounded-full hover:bg-background hover:shadow-md hover:text-secondary">
+                                Contacts
                             </Link>
                         </div>
                     </div>

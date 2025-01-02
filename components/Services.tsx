@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import services from "./utils/servicesData";
-import ServiceCard from "./utils/serviceCard";
+import ServiceCard from "./utils/ServiceCard";
 
 function Services() {
   const generalizedServices = services.filter(
