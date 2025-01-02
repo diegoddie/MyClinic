@@ -3,7 +3,7 @@ import ACHIEVEMENTS from "@/lib/data/achievements";
 
 function Achievements() {
     return (
-      <div className="py-6 md:py-12 px-1 overflow-hidden">
+      <div className="py-6 md:py-12 md:mt-6 px-1 overflow-hidden">
         <div className="relative flex overflow-x-hidden">
           <div className="animate-scroll flex">
             {ACHIEVEMENTS.map((achievement, index) => (
