@@ -1,3 +1,4 @@
+import About from "@/components/About";
 import Achievements from "@/components/Achievements";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -10,6 +11,7 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Achievements />
+      <About />
     </div>
     <Footer />
     </>
