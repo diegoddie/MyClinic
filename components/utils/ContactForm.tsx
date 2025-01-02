@@ -41,6 +41,7 @@ function ContactForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await send(values);
+      form.reset();
     } catch (error) {
       console.error(error);
     }
