@@ -2,8 +2,9 @@ import React from "react";
 import ACHIEVEMENTS from "@/lib/data/achievements";
 
 function Achievements() {
-    return (
-      <div className="py-6 md:py-12 md:mt-6 px-1 overflow-hidden">
+  return (
+    <section className="bg-gradient-to-b from-bgBlue to-bgGreen">
+      <div className="py-6 md:py-12 md:mt-6 px-1 overflow-hidden ">
         <div className="relative flex overflow-x-hidden">
           <div className="animate-scroll flex">
             {ACHIEVEMENTS.map((achievement, index) => (
@@ -37,7 +38,8 @@ function Achievements() {
           </div>
         </div>
       </div>
-    );
-  }
-  
-  export default Achievements;
+    </section>
+  );
+}
+
+export default Achievements;

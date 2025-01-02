@@ -45,6 +45,8 @@ export default {
 			secondary: '#00A0DC',
 			paragraphs: '#57595c',
   			background: '#f9fafb',
+			bgGreen: '#f0fdf4',
+			bgBlue: '#dbeafe',
   			foreground: '#1f2937',
 			success: '#48bb78',
 			error: '#f56565',

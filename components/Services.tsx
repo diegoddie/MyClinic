@@ -13,7 +13,7 @@ function Services() {
 
   return (
     <section
-      className="py-12 lg:py-20 bg-gradient-to-b from-foreground/15 to-background"
+      className="py-12 lg:py-20 bg-gradient-to-b from-bgBlue to-bgGreen"
       id="services"
     >
       <div className="container mx-auto px-4 md:px-6 py-1 md:py-4">

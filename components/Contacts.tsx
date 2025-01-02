@@ -7,7 +7,7 @@ import ContactForm from "./utils/ContactForm";
 function Contacts() {
   return (
     <section
-      className="py-12 lg:py-20 bg-gradient-to-b from-foreground/15 to-background"
+      className="py-12 lg:py-20 bg-gradient-to-b from-bgBlue to-bgGreen"
       id="contacts"
     >
       <div className="container mx-auto px-4 md:px-6 py-1 md:py-4">

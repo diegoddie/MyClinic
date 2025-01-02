@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Hero() {
   return (
-    <section className="flex items-center justify-center py-10 md:py-8 px-5 lg:px-8">
+    <section className="flex items-center justify-center py-10 md:py-8 px-5 lg:px-8 bg-gradient-to-b from-bgGreen to-bgBlue">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-center md:gap-8">
         {/* Left Content */}
         <div className="flex flex-col space-y-8 text-center md:text-left">

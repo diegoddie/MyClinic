@@ -23,7 +23,7 @@ import highlights from "@/lib/data/highlights";
 export default function About() {
   return (
     <section
-      className="py-12 lg:py-20 bg-gradient-to-b from-background to-foreground/15"
+      className="py-12 lg:py-20 bg-gradient-to-b from-bgGreen to-bgBlue"
       id="about"
     >
       <div className="container mx-auto px-4 md:px-6 py-1 md:py-4">
