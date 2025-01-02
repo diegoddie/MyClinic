@@ -19,7 +19,7 @@ function Contacts() {
             Are you looking to get in touch with us? Fill out the form below, and we ll get back to you as soon as possible.
           </p>
         </div>
-        <div className="relative w-full h-250px md:h-[350px] rounded-lg shadow-2xl">
+        <div className="relative w-full h-[150px] md:h-[350px] rounded-lg shadow-2xl">
           <Image
             src={map}
             alt="Map"
@@ -29,7 +29,7 @@ function Contacts() {
 
           />
         </div>
-        <div className="relative -mt-16 z-10">
+        <div className="relative -mt-6 md:-mt-16 z-10 px-4 md:px-0">
           <ContactForm />
         </div>
       </div>
