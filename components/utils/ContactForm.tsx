@@ -24,8 +24,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { formSchema } from "@/lib/contactSchema";
 import { send } from "@/lib/email";
+import { useToast } from "@/hooks/use-toast"
 
 function ContactForm() {
+  const { toast } = useToast();
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,9 +43,19 @@ function ContactForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
       await send(values);
+      toast({
+        title: "Success!",
+        description: "Your message has been sent successfully.",
+        variant: "success",
+      });
       form.reset();
     } catch (error) {
       console.error(error);
+      toast({
+        title: "Error",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
     }
   }
 
