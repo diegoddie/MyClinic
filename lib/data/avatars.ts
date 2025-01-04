@@ -1,8 +1,8 @@
-import Avatar1 from '@/public/avatar1.png';
-import Avatar2 from '@/public/avatar2.png';
-import Avatar3 from '@/public/avatar3.png';
-import Avatar4 from '@/public/avatar4.png';
-import Avatar5 from '@/public/avatar5.png';
+import Avatar1 from '@/public/avatar/avatar1.png';
+import Avatar2 from '@/public/avatar/avatar2.png';
+import Avatar3 from '@/public/avatar/avatar3.png';
+import Avatar4 from '@/public/avatar/avatar4.png';
+import Avatar5 from '@/public/avatar/avatar5.png';
 
 const avatars = [
   Avatar1.src,
