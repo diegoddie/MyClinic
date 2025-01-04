@@ -19,6 +19,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "./ui/button";
 import faqs from "@/lib/data/faqs";
 import highlights from "@/lib/data/highlights";
+import Link from "next/link";
 
 export default function About() {
   return (
@@ -106,16 +107,18 @@ export default function About() {
               </TabsContent>
             </Tabs>
             <div className="mt-6 md:mt-16">
-              <Button
-                className="text-white group flex items-center text-lg 2xl:text-xl rounded-sm border-2 border-primary/85 px-8 py-6 shadow-xl bg-secondary hover:bg-primary font-bold transition-colors duration-300"
-                aria-label="Book an Appointment"
-              >
-                Book an Appointment
-                <CircleChevronRight
-                  className="ml-1 override-size transition-transform duration-300 group-hover:translate-x-2"
-                  size={24}
-                />
-              </Button>
+              <Link href="/login">
+                <Button
+                  className="text-white group flex items-center text-lg 2xl:text-xl rounded-sm border-2 border-primary/85 px-8 py-6 shadow-xl bg-secondary hover:bg-primary font-bold transition-colors duration-300"
+                  aria-label="Book an Appointment"
+                >
+                  Book an Appointment
+                  <CircleChevronRight
+                    className="ml-1 override-size transition-transform duration-300 group-hover:translate-x-2"
+                    size={24}
+                  />
+                </Button>
+              </Link>
             </div>
           </div>
         </div>

@@ -138,8 +138,8 @@ function ContactForm() {
                 )}
               />
             </div>
-            <div className="w-full flex justify-end">
-              <Button type="submit" className="text-white text-md ">
+            <div className="w-full flex">
+              <Button type="submit" className="w-full bg-primary text-white text-lg">
                 Submit
               </Button>
             </div>

@@ -5,10 +5,11 @@ import heroRemoveBg from '@/public/hero.png';
 import { CircleChevronRight } from 'lucide-react';
 import avatars from '@/lib/data/avatars';
 import { Badge } from "@/components/ui/badge"
+import Link from 'next/link';
 
 export default function Hero() {
   return (
-    <section className="flex items-center justify-center py-10 md:py-8 px-5 lg:px-8 bg-gradient-to-b from-bgGreen to-bgBlue">
+    <section className="flex items-center justify-center py-10 md:py-8 px-5 lg:px-8 bg-gradient-to-b from-white via-bgGreen to-bgBlue">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-center md:gap-8">
         {/* Left Content */}
         <div className="flex flex-col space-y-8 text-center md:text-left">
@@ -49,6 +50,7 @@ export default function Hero() {
                 </Avatar>
               ))}
             </div>
+            <Link href="/login">
               <Button
                 className="text-white group flex items-center text-lg 2xl:text-xl rounded-sm border-2 border-primary/85 px-8 py-6 shadow-xl bg-secondary hover:bg-primary font-bold transition-colors duration-300"
                 aria-label="Book an Appointment"
@@ -59,6 +61,7 @@ export default function Hero() {
                   size={24} 
                 />
               </Button>
+            </Link>
           </div>
         </div>
         
