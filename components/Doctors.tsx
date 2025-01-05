@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -9,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { DoctorCard } from "./utils/DoctorCard";
 import doctors from "@/lib/data/doctors";
+import { motion } from "framer-motion";
 
 const Doctors = () => {
   return (
@@ -16,7 +19,13 @@ const Doctors = () => {
       className="py-12 lg:py-20 bg-gradient-to-b from-bgGreen to-bgBlue"
       id="doctors"
     >
-      <div className="container mx-auto px-4 md:px-6 py-1 md:py-4">
+      <motion.div
+        initial={{ x: -100, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
+        className="container mx-auto px-4 md:px-6 py-1 md:py-4"
+      >
         <div className="flex flex-col items-center space-y-4 text-center mb-8">
           <Badge
             variant="outline"
@@ -55,7 +64,7 @@ const Doctors = () => {
             <CarouselNext className="" />
           </Carousel>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

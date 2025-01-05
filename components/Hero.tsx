@@ -1,3 +1,5 @@
+'use client'
+
 import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -6,11 +8,17 @@ import { CircleChevronRight } from 'lucide-react';
 import avatars from '@/lib/data/avatars';
 import { Badge } from "@/components/ui/badge"
 import Link from 'next/link';
+import { motion } from "framer-motion";
 
 export default function Hero() {
   return (
     <section className="flex items-center justify-center py-10 md:py-8 px-5 lg:px-8 bg-gradient-to-b from-white via-bgGreen to-bgBlue">
-      <div className="container mx-auto flex flex-col md:flex-row items-center justify-center md:gap-8">
+      <motion.div 
+        initial={{ opacity: 0, y: -80 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        className="container mx-auto flex flex-col md:flex-row items-center justify-center md:gap-8"
+      >
         {/* Left Content */}
         <div className="flex flex-col space-y-8 text-center md:text-left">
           <Badge variant="outline" className="text-primary border border-green-400 bg-green-50 tracking-tight text-md px-3 py-1 font-semibold self-center md:self-start inline-block">
@@ -74,7 +82,7 @@ export default function Hero() {
             priority
           />
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

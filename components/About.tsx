@@ -20,6 +20,7 @@ import { Button } from "./ui/button";
 import faqs from "@/lib/data/faqs";
 import highlights from "@/lib/data/highlights";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function About() {
   return (
@@ -27,7 +28,13 @@ export default function About() {
       className="py-12 lg:py-20 bg-gradient-to-b from-bgGreen to-bgBlue"
       id="about"
     >
-      <div className="container mx-auto px-4 md:px-6 py-1 md:py-4">
+      <motion.div 
+        initial={{ x: -100, opacity: 0 }}
+        whileInView={{ x: 0, opacity: 1 }}
+        viewport={{ once: true }}
+        transition= {{ duration: 1, ease: "easeOut", delay: 0.6 }}
+        className="container mx-auto px-4 md:px-6 py-1 md:py-4"
+      >
         <div className="flex flex-col items-center space-y-4 text-center mb-12">
           <Badge variant="outline" className="text-primary border-primary mt-3 md:mt-4 px-4 py-1 rounded-full text-sm md:text-md">
             About Us
@@ -141,7 +148,7 @@ export default function About() {
             ))}
           </Accordion>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

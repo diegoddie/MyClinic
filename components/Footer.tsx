@@ -12,7 +12,7 @@ function Footer() {
             {/* First Column: Logo / Name */}
                 <div className='flex flex-col justify-center items-center'>
                     <span className="text-secondary text-3xl md:text-4xl font-extrabold">My<span className="text-primary text-3xl md:text-4xl font-extrabold">Clinic</span></span>
-                    <Image src={Logo} alt='MyClinic Logo' width={110} height={110} />
+                    <Image src={Logo} alt='MyClinic Logo' width={110} height={110} className='items-center justify-center mx-auto' />
                     <p className='text-xl font-semibold'>Your health, our priority.</p>
                 </div>
                 {/* Second Column: Quick Links */}

@@ -1,3 +1,6 @@
+'use client'
+
+import { motion } from "framer-motion";
 import React from "react";
 import ACHIEVEMENTS from "@/lib/data/achievements";
 
@@ -6,7 +9,15 @@ function Achievements() {
     <section className="bg-gradient-to-b from-bgBlue to-bgGreen">
       <div className="py-6 md:py-12 md:mt-6 px-1 overflow-hidden ">
         <div className="relative flex overflow-x-hidden">
-          <div className="animate-scroll flex">
+          <motion.div
+            className="flex"
+            animate={{ x: ["0%", "-100%"] }}  
+            transition={{
+              duration: 15,  
+              ease: "linear",   
+              repeat: Infinity,  
+            }}
+          >
             {ACHIEVEMENTS.map((achievement, index) => (
               <div
                 key={index}
@@ -20,8 +31,16 @@ function Achievements() {
                 </p>
               </div>
             ))}
-          </div>
-          <div className="animate-scroll flex max-w" aria-hidden="true">
+          </motion.div>
+          <motion.div
+            className="flex"
+            animate={{ x: ["0%", "-100%"] }}
+            transition={{
+              duration: 15,
+              ease: "linear",
+              repeat: Infinity,
+            }}
+          >
             {ACHIEVEMENTS.map((achievement, index) => (
               <div
                 key={index}
@@ -35,7 +54,7 @@ function Achievements() {
                 </p>
               </div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
