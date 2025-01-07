@@ -37,7 +37,7 @@ const Doctors = () => {
             Doctors
           </h2>
           <p className="mx-auto max-w-2xl text-paragraphs text-lg md:text-xl">
-            Meet our team of experienced and dedicated doctors at MyClinic.
+            Meet our experienced team of doctors!
           </p>
         </div>
         <div className="w-full px-10 md:px-20 ">

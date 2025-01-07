@@ -29,15 +29,15 @@ export default {
   			}
   		},
   		colors: {
-			primary: '#2a6f97',
-			secondary: '#00A0DC',
-			paragraphs: '#57595c',
+  			primary: '#2a6f97',
+  			secondary: '#00A0DC',
+  			paragraphs: '#57595c',
   			background: '#f9fafb',
-			bgGreen: '#f0fdf4',
-			bgBlue: '#dbeafe',
+  			bgGreen: '#f0fdf4',
+  			bgBlue: '#dbeafe',
   			foreground: '#1f2937',
-			success: '#48bb78',
-			error: '#f56565',
+  			success: '#48bb78',
+  			error: '#f56565',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
@@ -67,6 +67,16 @@ export default {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
+  			},
+  			sidebar: {
+  				DEFAULT: 'hsl(var(--sidebar-background))',
+  				foreground: 'hsl(var(--sidebar-foreground))',
+  				primary: 'hsl(var(--sidebar-primary))',
+  				'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
+  				accent: 'hsl(var(--sidebar-accent))',
+  				'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
+  				border: 'hsl(var(--sidebar-border))',
+  				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
   		borderRadius: {
