@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import heroRemoveBg from '@/public/hero.png';
 import { CircleChevronRight } from 'lucide-react';
-import avatars from '@/lib/data/avatars';
+import avatars from '@/lib/landingPageData/avatars';
 import { Badge } from "@/components/ui/badge"
 import Link from 'next/link';
 import { motion } from "framer-motion";

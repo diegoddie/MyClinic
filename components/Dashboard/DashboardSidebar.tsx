@@ -17,7 +17,7 @@ import {
 import Image from "next/image"
 import MyClinicLogo from "@/public/MYClinic.png";
 import Link from "next/link";
-import { Separator } from "./ui/separator";
+import { Separator } from "../ui/separator";
 
 const items = [
   {

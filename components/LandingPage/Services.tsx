@@ -2,10 +2,11 @@
 
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import services from "./utils/servicesData";
-import ServiceCard from "./utils/ServiceCard";
-import { Badge } from "./ui/badge";
+
 import { motion } from "framer-motion";
+import services from "../utils/servicesData";
+import { Badge } from "../ui/badge";
+import ServiceCard from "./Card/ServiceCard";
 
 function Services() {
   const generalizedServices = services.filter(

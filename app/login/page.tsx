@@ -1,5 +1,5 @@
-import Logo from "@/components/Logo";
-import LoginForm from "@/components/utils/LoginForm";
+import Logo from "@/components/utils/Logo";
+import LoginForm from "@/components/Form/LoginForm";
 
 export default async function Page() {
   return (

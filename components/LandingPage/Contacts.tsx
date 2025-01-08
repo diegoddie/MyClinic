@@ -3,8 +3,8 @@
 import React from "react";
 import Image from "next/image";
 import map from "@/public/map.png";
-import ContactForm from "./utils/ContactForm";
-import { Badge } from "./ui/badge";
+import ContactForm from "../Form/ContactForm";
+import { Badge } from "../ui/badge";
 import { motion } from "framer-motion";
 
 function Contacts() {

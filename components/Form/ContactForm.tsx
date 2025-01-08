@@ -22,8 +22,8 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { formSchema } from "@/lib/contactSchema";
-import { send } from "@/lib/email";
+import { formSchema } from "@/lib/schemas/contactSchema";
+import { send } from "@/lib/resend/email";
 import { useToast } from "@/hooks/use-toast"
 
 function ContactForm() {

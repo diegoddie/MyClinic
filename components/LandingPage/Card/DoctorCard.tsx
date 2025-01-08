@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, Phone } from "lucide-react";
 import Image from "next/image";
-import { Badge } from "../ui/badge";
+import { Badge } from "../../ui/badge";
 
 interface DoctorProps {
   firstName: string;

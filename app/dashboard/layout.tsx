@@ -1,8 +1,8 @@
 "use client";
 
-import DashboardSidebar from "@/components/DashboardSidebar";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
+import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
+
+import { ThemeToggle } from "@/components/Dashboard/ThemeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -10,6 +10,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import { ThemeProvider } from "@/components/utils/theme-provider";
 import { usePathname } from "next/navigation";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -43,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Avatar>
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto p-4 dark:bg-[#09090b] dark:text-white bg-white text-black">{children}</main>
+          <main className="min-h-screen p-4 dark:bg-[#09090b] bg-white">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>

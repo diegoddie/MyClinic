@@ -1,11 +1,11 @@
-import About from "@/components/About";
-import Achievements from "@/components/Achievements";
-import Contacts from "@/components/Contacts";
-import Doctors from "@/components/Doctors";
-import Footer from "@/components/Footer";
-import Hero from "@/components/Hero";
-import Navbar from "@/components/Navbar";
-import Services from "@/components/Services";
+import About from "@/components/LandingPage/About";
+import Achievements from "@/components/LandingPage/Achievements";
+import Contacts from "@/components/LandingPage/Contacts";
+import Doctors from "@/components/LandingPage/Doctors";
+import Footer from "@/components/LandingPage/Footer";
+import Hero from "@/components/LandingPage/Hero";
+import Navbar from "@/components/LandingPage/Navbar";
+import Services from "@/components/LandingPage/Services";
 
 export default function Home() {
   return (

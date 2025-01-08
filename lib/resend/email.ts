@@ -1,6 +1,6 @@
 'use server'
 
-import { formSchema } from "./contactSchema"
+import { formSchema } from "./schemas/contactSchema"
 import { z } from "zod"
 import { Resend } from 'resend';
 import { EmailTemplate } from "@/components/ui/email-template";

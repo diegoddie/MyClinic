@@ -17,7 +17,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import Logo from "./Logo";
+import Logo from "../utils/Logo";
 
 const navItems = [
   { name: "Home", href: "/" },

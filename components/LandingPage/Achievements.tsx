@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import React from "react";
-import ACHIEVEMENTS from "@/lib/data/achievements";
+import ACHIEVEMENTS from "@/lib/landingPageData/achievements";
 
 function Achievements() {
   return (

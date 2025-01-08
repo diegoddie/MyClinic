@@ -9,8 +9,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { DoctorCard } from "./utils/DoctorCard";
-import doctors from "@/lib/data/doctors";
+import { DoctorCard } from "./Card/DoctorCard";
+import doctors from "@/lib/landingPageData/doctors";
 import { motion } from "framer-motion";
 
 const Doctors = () => {

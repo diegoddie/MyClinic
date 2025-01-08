@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "./ui/button";
-import faqs from "@/lib/data/faqs";
-import highlights from "@/lib/data/highlights";
+import { Button } from "../ui/button";
+import faqs from "@/lib/landingPageData/faqs";
+import highlights from "@/lib/landingPageData/highlights";
 import Link from "next/link";
 import { motion } from "framer-motion";
 

@@ -1,5 +1,5 @@
-import Logo from "@/components/Logo";
-import RegistrationForm from "@/components/utils/RegistrationForm";
+import Logo from "@/components/utils/Logo";
+import RegistrationForm from "@/components/Form/RegistrationForm";
 
 export default async function Page() {
   return (
