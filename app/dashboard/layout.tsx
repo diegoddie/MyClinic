@@ -44,7 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Avatar>
             </div>
           </header>
-          <main className="min-h-screen p-4 dark:bg-[#09090b] bg-white dark:text-white bg-white text-black">{children}</main>
+          <main className="min-h-screen p-4 dark:bg-[#09090b] dark:text-white bg-white text-black">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </ThemeProvider>
