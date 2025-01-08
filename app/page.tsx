@@ -9,7 +9,7 @@ import Services from "@/components/LandingPage/Services";
 
 export default function Home() {
   return (
-    <>
+    <div className="overflow-x-hidden">
       <Navbar />
       <Hero />
       <Achievements />
@@ -18,6 +18,6 @@ export default function Home() {
       <Doctors />
       <Contacts />
       <Footer />
-    </>
+    </div>
   );
 }

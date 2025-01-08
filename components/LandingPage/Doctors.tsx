@@ -49,9 +49,9 @@ const Doctors = () => {
             className="w-full"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
-              {doctors.map((doctor, index) => (
+              {doctors.map((doctor) => (
                 <CarouselItem
-                  key={index}
+                  key={doctor.id}
                   className="pl-2 md:pl-4 sm:basis-1/2 lg:basis-1/3"
                 >
                   <div className="p-1">

@@ -7,6 +7,7 @@ import Doctor6 from "@/public/doctors/doctor6.png";
 
 const doctors = [
   {
+    id: 1,
     firstName: "Robert",
     lastName: "Mitchell",
     specialization: "Orthodontist",
@@ -15,6 +16,7 @@ const doctors = [
     image: Doctor5.src,
   },
   {
+    id: 2,
     firstName: "James",
     lastName: "Wilson",
     specialization: "Neurologist",
@@ -23,6 +25,7 @@ const doctors = [
     image: Doctor4.src,
   },
   {
+    id: 3,
     firstName: "Emily",
     lastName: "Parker",
     specialization: "Pediatric Specialist",
@@ -31,6 +34,7 @@ const doctors = [
     image: Doctor6.src,
   },
   {
+    id: 4,
     firstName: "Michael",
     lastName: "Chen",
     specialization: "Dermatologist",
@@ -39,6 +43,7 @@ const doctors = [
     image: Doctor2.src,
   },
   {
+    id: 5,
     firstName: "Oscar",
     lastName: "Clark",
     specialization: "Cardiologist",
@@ -47,6 +52,7 @@ const doctors = [
     image: Doctor1.src,
   },
   {
+    id: 6,
     firstName: "Callum",
     lastName: "King",
     specialization: "Psychiatrist",

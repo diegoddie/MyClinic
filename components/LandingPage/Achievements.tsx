@@ -6,8 +6,8 @@ import ACHIEVEMENTS from "@/lib/landingPageData/achievements";
 
 function Achievements() {
   return (
-    <section className="bg-gradient-to-b from-bgBlue to-bgGreen">
-      <div className="py-6 md:py-12 md:mt-6 px-1 overflow-hidden ">
+    <section className="bg-gradient-to-b from-bgBlue to-bgGreen md:pt-8 ">
+      <div className="py-6 md:py-12 px-1 overflow-hidden ">
         <div className="relative flex overflow-x-hidden">
           <motion.div
             className="flex"
