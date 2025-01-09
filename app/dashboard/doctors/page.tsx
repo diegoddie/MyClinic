@@ -1,6 +1,8 @@
+'use client'
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { MoreVertical, Plus } from "lucide-react";
+import { Menu, MoreVertical, Plus } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,23 +19,11 @@ export default function Doctors() {
     <div className="py-2">
       <Card className="py-2 p-6">
         <div className="flex items-center justify-end mb-6 gap-4">
-          <Button variant="outline" className="gap-2">
-            <svg
-              className="h-4 w-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 4h18M3 12h18M3 20h18"
-              />
-            </svg>
+          <Button className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
+            <Menu className="h-4 w-4" />
             Filters
           </Button>
-          <Button className="gap-2 bg-blue-600 hover:bg-blue-700">
+          <Button type="submit" className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
             <Plus className="h-4 w-4" />
             Add Doctor
           </Button>
@@ -44,10 +34,9 @@ export default function Doctors() {
             <TableRow>
               <TableHead>NAME</TableHead>
               <TableHead>CONTACT</TableHead>
-              <TableHead>WORKING DAYS</TableHead>
-              <TableHead>ASSIGNED TREATMENT</TableHead>
-              <TableHead>TYPE</TableHead>
-              <TableHead className="w-[80px]"></TableHead>
+              <TableHead>SPECIALIZATION</TableHead>
+              <TableHead>NEXT AVAILABLE</TableHead>
+              <TableHead>ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -67,24 +56,24 @@ export default function Doctors() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium">
+                      <div className="font-semibold md:text-lg">
                         {doctor.firstName} {doctor.lastName}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm">
                         {doctor.specialization}
                       </div>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div>{doctor.email}</div>
-                  <div className="text-sm text-blue-600">{doctor.email}</div>
+                  <div className="font-semibold md:text-md">{doctor.email}</div>
                 </TableCell>
-                <TableCell>PLACEHOLDER</TableCell>
-                <TableCell className="text-sm">
-                  {doctor.specialization}
+                <TableCell>
+                  <div>{doctor.specialization}</div>
                 </TableCell>
-                <TableCell>PLACEHOLDER</TableCell>
+                <TableCell>
+                  <div>PLACEHOLDER</div>
+                </TableCell>
                 <TableCell>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
                     <MoreVertical className="h-4 w-4" />
