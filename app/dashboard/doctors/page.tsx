@@ -1,8 +1,9 @@
 'use client'
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Menu, MoreVertical, Plus } from "lucide-react";
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
+import { Menu, MoreVertical, Plus } from 'lucide-react'
 import {
   Table,
   TableBody,
@@ -10,11 +11,36 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import doctors from "@/lib/landingPageData/doctors";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+} from "@/components/ui/table"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import doctors from "@/lib/landingPageData/doctors"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Doctors() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 5
+  const totalPages = Math.ceil(doctors.length / itemsPerPage)
+
+  // Get current doctors
+  const indexOfLastDoctor = currentPage * itemsPerPage
+  const indexOfFirstDoctor = indexOfLastDoctor - itemsPerPage
+  const currentDoctors = doctors.slice(indexOfFirstDoctor, indexOfLastDoctor)
+
+  // Change page
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  // Generate page numbers
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1)
+
   return (
     <div className="py-2">
       <Card className="py-2 p-6">
@@ -29,7 +55,7 @@ export default function Doctors() {
           </Button>
         </div>
 
-        <Table className="">
+        <Table>
           <TableHeader>
             <TableRow>
               <TableHead>NAME</TableHead>
@@ -40,7 +66,7 @@ export default function Doctors() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {doctors.map((doctor) => (
+            {currentDoctors.map((doctor) => (
               <TableRow key={doctor.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -51,15 +77,15 @@ export default function Doctors() {
                         className="object-cover bg-primary"
                       />
                       <AvatarFallback>
-                        {doctor.firstName}
-                        {doctor.lastName}
+                        {doctor.firstName[0]}
+                        {doctor.lastName[0]}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-semibold md:text-lg">
                         {doctor.firstName} {doctor.lastName}
                       </div>
-                      <div className="text-sm">
+                      <div className="text-sm text-muted-foreground">
                         {doctor.specialization}
                       </div>
                     </div>
@@ -69,10 +95,10 @@ export default function Doctors() {
                   <div className="font-semibold md:text-md">{doctor.email}</div>
                 </TableCell>
                 <TableCell>
-                  <div>{doctor.specialization}</div>
+                  <div className="text-muted-foreground">{doctor.specialization}</div>
                 </TableCell>
                 <TableCell>
-                  <div>PLACEHOLDER</div>
+                  <div className="text-muted-foreground">PLACEHOLDER</div>
                 </TableCell>
                 <TableCell>
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -86,7 +112,53 @@ export default function Doctors() {
             ))}
           </TableBody>
         </Table>
+
+        
       </Card>
+      <div className="mt-4 flex">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (currentPage > 1) handlePageChange(currentPage - 1)
+                  }}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              
+              {pageNumbers.map((number) => (
+                <PaginationItem key={number}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handlePageChange(number)
+                    }}
+                    isActive={currentPage === number}
+                    className={currentPage === number ? "bg-secondary text-white" : ""}
+                  >
+                    {number}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (currentPage < totalPages) handlePageChange(currentPage + 1)
+                  }}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
     </div>
-  );
+  )
 }
+

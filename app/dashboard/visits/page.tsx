@@ -12,6 +12,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
@@ -19,11 +27,18 @@ import visits from "@/lib/exampleVisits"
 
 export default function Visits() {
   const [activeTab, setActiveTab] = useState("all")
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 2
 
   const filteredVisits = visits.filter((visit) => {
     if (activeTab === "all") return true
     return visit.status.toLowerCase() === activeTab.toLowerCase()
   })
+
+  const totalPages = Math.ceil(filteredVisits.length / itemsPerPage)
+  const indexOfLastVisit = currentPage * itemsPerPage
+  const indexOfFirstVisit = indexOfLastVisit - itemsPerPage
+  const currentVisits = filteredVisits.slice(indexOfFirstVisit, indexOfLastVisit)
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -38,11 +53,20 @@ export default function Visits() {
     }
   }
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+  }
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+    setCurrentPage(1) // Reset to first page when changing tabs
+  }
+
   return (
     <div className="py-2">
       <Card className="py-2 p-6">
         <div className="flex items-center justify-between mb-6">
-          <Tabs defaultValue="all" className="" onValueChange={setActiveTab}>
+          <Tabs defaultValue="all" className="" onValueChange={handleTabChange}>
             <TabsList className="flex space-x-4 bg-secondary dark:text-black text-white">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="pending">Confirmed</TabsTrigger>
@@ -67,7 +91,7 @@ export default function Visits() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredVisits.map((visit) => (
+            {currentVisits.map((visit) => (
               <TableRow key={visit.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -138,6 +162,50 @@ export default function Visits() {
             ))}
           </TableBody>
         </Table>
+
+        <div className="mt-4 flex justify-end">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (currentPage > 1) handlePageChange(currentPage - 1)
+                  }}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+              
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((number) => (
+                <PaginationItem key={number}>
+                  <PaginationLink
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handlePageChange(number)
+                    }}
+                    isActive={currentPage === number}
+                    className={currentPage === number ? "bg-secondary text-white" : ""}
+                  >
+                    {number}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext 
+                  href="#" 
+                  onClick={(e) => {
+                    e.preventDefault()
+                    if (currentPage < totalPages) handlePageChange(currentPage + 1)
+                  }}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </Card>
     </div>
   )
