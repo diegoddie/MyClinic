@@ -67,7 +67,7 @@ export default function Visits() {
       <Card className="py-2 p-6">
         <div className="flex items-center justify-between mb-6">
           <Tabs defaultValue="all" className="" onValueChange={handleTabChange}>
-            <TabsList className="flex space-x-4 bg-secondary dark:text-black text-white">
+            <TabsList className="flex space-x-4">
               <TabsTrigger value="all">All</TabsTrigger>
               <TabsTrigger value="pending">Confirmed</TabsTrigger>
               <TabsTrigger value="confirmed">Pending</TabsTrigger>
@@ -162,9 +162,8 @@ export default function Visits() {
             ))}
           </TableBody>
         </Table>
-
-        <div className="mt-4 flex justify-end">
-          <Pagination>
+        </Card>
+          <Pagination className="mt-4 flex">
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious 
@@ -186,7 +185,7 @@ export default function Visits() {
                       handlePageChange(number)
                     }}
                     isActive={currentPage === number}
-                    className={currentPage === number ? "bg-secondary text-white" : ""}
+                    className={currentPage === number ? "bg-secondary text-white dark:text-black" : ""}
                   >
                     {number}
                   </PaginationLink>
@@ -205,8 +204,6 @@ export default function Visits() {
               </PaginationItem>
             </PaginationContent>
           </Pagination>
-        </div>
-      </Card>
     </div>
   )
 }
