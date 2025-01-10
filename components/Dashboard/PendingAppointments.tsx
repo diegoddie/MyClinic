@@ -36,7 +36,7 @@ export function PendingAppointments() {
     }
   
     return (
-      <Card className="flex-1">
+      <Card className="flex-1 w-full">
         <CardHeader>
           <Link href="/dashboard/visits">
             <CardTitle className="hover:underline cursor-pointer text-lg font-bold">
@@ -101,7 +101,7 @@ export function PendingAppointments() {
                   </div>
                 </TableCell>
                   <TableCell>
-                    <div className="text-md font-semibold">
+                    <div className="text-md md:text-lg mfont-semibold">
                       {new Date(visit.date).toLocaleDateString("en-EN", {
                         year: "numeric",
                         month: "long",

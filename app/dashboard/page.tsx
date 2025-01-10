@@ -7,7 +7,7 @@ import { Users, Calendar, Stethoscope } from 'lucide-react'
 export default function DashboardPage() {
   return (
     <div className="py-2 space-y-8">
-      <div className="items-center justify-center flex flex-wrap gap-4">
+      <div className="w-full items-center justify-center flex flex-col md:flex-row gap-4">
       <OverviewCard
         title="Pending Appointments"
         value={8}

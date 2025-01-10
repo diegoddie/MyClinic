@@ -12,7 +12,7 @@ export function RecentAppointments() {
   ]
 
   return (
-    <Card className="flex-1">
+    <Card className="flex-1 w-full">
       <CardHeader>
         <Link href="/dashboard/visits">
           <CardTitle className="hover:underline cursor-pointer">Latest Appointments</CardTitle>
