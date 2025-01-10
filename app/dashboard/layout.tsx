@@ -1,7 +1,6 @@
 "use client";
 
 import DashboardSidebar from "@/components/Dashboard/DashboardSidebar";
-
 import { ThemeToggle } from "@/components/Dashboard/ThemeToggle";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";

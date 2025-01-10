@@ -52,7 +52,10 @@ export default function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <Link href={'/'} className="flex flex-row gap-1 justify-center items-center">
+              <Link 
+                href={'/'} 
+                className="flex flex-row gap-1 justify-center items-center"
+              >
                 <Image 
                   src={MyClinicLogo}
                   alt="Logo"
