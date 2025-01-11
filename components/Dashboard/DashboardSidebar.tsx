@@ -44,8 +44,15 @@ const items = [
 
 export default function DashboardSidebar() {
   const {
-    open
+    open,
+    openMobile,
+    setOpenMobile,
   } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (openMobile) setOpenMobile(false); // Chiude la sidebar in modalità responsiva
+  };
+
   return (
     <Sidebar collapsible="icon" className="dark:border-r-slate-500 border-r-black/30">
       <SidebarHeader>
@@ -83,7 +90,7 @@ export default function DashboardSidebar() {
                 <SidebarMenuItem key={item.title}>
                   {item.title.toLowerCase() === "settings" && <Separator className="my-2 bg-black/30 dark:bg-slate-500" />}
                   <SidebarMenuButton asChild>
-                  <Link href={item.url} className="font-medium">
+                  <Link href={item.url} className="font-medium" onClick={handleLinkClick}>
                       <item.icon className="mr-2" size={32} />
                       <span className="">{item.title}</span>
                     </Link>
