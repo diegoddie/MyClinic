@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Menu, MoreVertical, Plus } from "lucide-react";
 import {
   Table,
@@ -20,6 +19,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import doctors from "@/lib/landingPageData/doctors";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -42,23 +42,22 @@ export default function Doctors() {
   const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="py-2">
-      <Card className="py-2 p-6">
-        <div className="flex items-center justify-end mb-6 gap-4">
-          <Button className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
-            <Menu className="h-4 w-4" />
-            Filters
-          </Button>
-          <Button
-            type="submit"
-            className="bg-secondary dark:text-black text-white dark:font-semibold gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Add Doctor
-          </Button>
-        </div>
-
-        <Table>
+    <div className="py-2 flex flex-col">
+      <div className="flex items-center justify-center md:justify-end mb-6 gap-4">
+        <Button className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
+          <Menu className="h-4 w-4" />
+          Filters
+        </Button>
+        <Button
+          type="submit"
+          className="bg-secondary dark:text-black text-white dark:font-semibold gap-2"
+        >
+          <Plus className="h-4 w-4" />
+          Add Doctor
+        </Button>
+      </div>
+      <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+        <Table className="">
           <TableHeader>
             <TableRow>
               <TableHead>NAME</TableHead>
@@ -95,7 +94,9 @@ export default function Doctors() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="font-semibold md:text-md">{doctor.email}</div>
+                  <div className="font-semibold md:text-md">
+                    {doctor.email}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <div className="text-muted-foreground">
@@ -117,7 +118,9 @@ export default function Doctors() {
             ))}
           </TableBody>
         </Table>
-      </Card>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+      
       <Pagination className="flex mt-4">
         <PaginationContent>
           <PaginationItem>
