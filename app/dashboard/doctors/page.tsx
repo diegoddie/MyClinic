@@ -56,7 +56,7 @@ export default function Doctors() {
           Add Doctor
         </Button>
       </div>
-      <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+      <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <Table className="">
           <TableHeader>
             <TableRow>
@@ -146,7 +146,7 @@ export default function Doctors() {
                 }}
                 isActive={currentPage === number}
                 className={
-                  currentPage === number ? "bg-secondary text-white" : ""
+                  currentPage === number ? "bg-secondary text-white dark:text-black pointer-events-none" : ""
                 }
               >
                 {number}

@@ -69,7 +69,7 @@ export default function Visits() {
     <div className="py-2 flex flex-col">
       <div className="flex flex-col gap-4 md:gap-0 md:flex-row items-center justify-between mb-4">
         <Tabs defaultValue="all" className="" onValueChange={handleTabChange}>
-          <TabsList className="flex space-x-4">
+          <TabsList className="flex text-sm md:text-md space-x-2">
             <TabsTrigger value="all">All</TabsTrigger>
             <TabsTrigger value="confirmed">Confirmed</TabsTrigger>
             <TabsTrigger value="pending">Pending</TabsTrigger>
@@ -81,7 +81,7 @@ export default function Visits() {
           Filters
         </Button>
       </div>
-      <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+      <ScrollArea className="w-full whitespace-nowrap rounded-md">
       <Table>
         <TableHeader>
           <TableRow>
@@ -192,7 +192,7 @@ export default function Visits() {
                 isActive={currentPage === number}
                 className={
                   currentPage === number
-                    ? "bg-secondary text-white dark:text-black"
+                    ? "bg-secondary text-white dark:text-black pointer-events-none"
                     : ""
                 }
               >

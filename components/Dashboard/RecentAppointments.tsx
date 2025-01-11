@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import Link from "next/link"
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export function RecentAppointments() {
   const appointments = [
@@ -12,33 +13,36 @@ export function RecentAppointments() {
   ]
 
   return (
-    <Card className="flex-1 w-full">
+    <Card className="w-full">
       <CardHeader>
         <Link href="/dashboard/visits">
-          <CardTitle className="hover:underline cursor-pointer">Latest Appointments</CardTitle>
+          <CardTitle className="hover:underline cursor-pointer text-lg font-bold">Latest Appointments</CardTitle>
         </Link>
       </CardHeader>
       <CardContent>
+      <ScrollArea className="w-full whitespace-nowrap rounded-md">
         <Table>
           <TableHeader>
             <TableRow>
               <TableHead>Patient</TableHead>
+              <TableHead>Doctor</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Time</TableHead>
-              <TableHead>Doctor</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {appointments.map((appointment) => (
               <TableRow key={appointment.id}>
                 <TableCell>{appointment.patient}</TableCell>
+                <TableCell>{appointment.doctor}</TableCell>
                 <TableCell>{appointment.date}</TableCell>
                 <TableCell>{appointment.time}</TableCell>
-                <TableCell>{appointment.doctor}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
+        <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </CardContent>
     </Card>
   )
