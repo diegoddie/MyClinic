@@ -1,6 +1,5 @@
 'use server';
 
-
 import { createClient } from "../server";
 import { User } from "@supabase/supabase-js";
 
