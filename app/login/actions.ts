@@ -15,8 +15,9 @@ export async function loginWithMagicLink(formData: FormData) {
       shouldCreateUser: true,
       emailRedirectTo: getURL(),
     },
+    
   });
-
+  
   if (error) {
     console.log(error);
     const errorMessage =
@@ -29,10 +30,12 @@ export async function loginWithMagicLink(formData: FormData) {
 
 export async function loginWithGoogle(){
   const supabase = await createClient();
+  const redirectURL = getURL() + "auth/callback";
+  console.log(redirectURL);
   const { data,error } = await supabase.auth.signInWithOAuth({ 
     provider: "google" ,
     options: {
-      redirectTo: getURL() + "/auth/callback",
+      redirectTo: redirectURL,
     },
   });
 
