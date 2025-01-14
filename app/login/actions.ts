@@ -12,7 +12,7 @@ export async function loginWithMagicLink(formData: FormData) {
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: '/dashboard',
+      emailRedirectTo: '/auth/confirm',
     },
   });
 
