@@ -4,7 +4,7 @@ import { PendingAppointments } from "@/components/Dashboard/PendingAppointments"
 import { RecentAppointments } from "@/components/Dashboard/RecentAppointments";
 import { Users, Calendar, Stethoscope } from 'lucide-react'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
   return (
     <div className="py-2 space-y-8">
       <div className="w-full items-center justify-center flex flex-col md:flex-row gap-4">

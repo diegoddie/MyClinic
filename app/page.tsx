@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import About from "@/components/LandingPage/About";
 import Achievements from "@/components/LandingPage/Achievements";
@@ -8,17 +8,61 @@ import Footer from "@/components/LandingPage/Footer";
 import Hero from "@/components/LandingPage/Hero";
 import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
-import { useEffect } from "react";
+import { User } from "@supabase/supabase-js";
+import { useState, useEffect } from "react";
+import getUser from "@/utils/supabase/actions/getUser";
+import { createClient } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const logout = async () => {
+    setIsLoggingOut(true);
+    const supabaseClient = createClient()
+
+    const { error } = await supabaseClient.auth.signOut()
+
+    if (!error) {
+      router.refresh()
+      setIsLoggingOut(false);
+      setUser(null)
+      toast({
+        title: "Logged out",
+        description: "You have been successfully logged out",
+        variant: "success",
+      })
+    }
+    if(error) {
+      setIsLoggingOut(false);
+      toast({
+        title: "Error",
+        description: "Failed to logout. Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
   useEffect(() => {
-    document.documentElement.classList.remove("dark")
+    document.documentElement.classList.remove("dark");
     document.documentElement.removeAttribute("style");
-  }, [])
+
+    const fetchUser = async () => {
+      const userData = await getUser(); 
+      setUser(userData); 
+    };
+
+    fetchUser(); 
+  }, []); 
 
   return (
     <div className="overflow-x-hidden">
-      <Navbar />
+      <Navbar user={user} logout={logout} isLoggingOut={isLoggingOut} /> 
       <Hero />
       <Achievements />
       <About />

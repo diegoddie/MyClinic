@@ -18,6 +18,16 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import Logo from "../utils/Logo";
+import { User } from "@supabase/supabase-js";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Separator } from "../ui/separator";
+import { Spinner } from "../ui/spinner";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -27,7 +37,13 @@ const navItems = [
   { name: "Contacts", href: "#contacts" },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  user: User | null;
+  logout: () => void;
+  isLoggingOut: boolean;
+}
+
+export default function Navbar({ user, logout, isLoggingOut }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -54,11 +70,58 @@ export default function Navbar() {
           </div>
 
           <div className="hidden lg:block">
-            <Link href="/login">
-              <Button className="border border-secondary rounded-full 2xl:text-xl bg-secondary hover:bg-primary px-8 py-5 text-lg font-bold text-white transition-colors duration-300">
-                Login
-              </Button>
-            </Link>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer hover:shadow-md h-14 w-14">
+                    <AvatarImage
+                      src={
+                        user.user_metadata.avatar_url ||
+                        "https://github.com/shadcn.png"
+                      }
+                      alt={user.email || ""}
+                    />
+                    <AvatarFallback>
+                      {user.email ? user.email[0].toUpperCase() : "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="">
+                  <DropdownMenuItem className="">
+                    <Link
+                      href="/dashboard"
+                      className=" text-primary font-semibold text-lg items-center justify-center mx-auto"
+                    >
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <Separator />
+                  <DropdownMenuItem>
+                    <Button
+                      onClick={logout}
+                      disabled={isLoggingOut}
+                      type="button"
+                      className="bg-secondary text-white text-lg w-full"
+                    >
+                      {isLoggingOut ? (
+                        <>
+                          <Spinner className="mr-2" />
+                          <span>Logging out...</span>
+                        </>
+                      ) : (
+                        <span>Logout</span>
+                      )}
+                    </Button>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login">
+                <Button className="border border-secondary rounded-full 2xl:text-xl bg-secondary hover:bg-primary px-8 py-5 text-lg font-bold text-white transition-colors duration-300">
+                  Login
+                </Button>
+              </Link>
+            )}
           </div>
 
           <div className="lg:hidden">
@@ -84,11 +147,59 @@ export default function Navbar() {
                       {item.name}
                     </Link>
                   ))}
-                  <Link href="/login" className="w-full" onClick={() => setIsOpen(false)}>
-                    <Button className="border border-secondary mt-2 w-full rounded-full bg-secondary px-8 py-5 text-lg font-bold text-white transition-colors duration-300 hover:bg-primary">
-                      Login
-                    </Button>
-                  </Link>
+                  {user ? (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Avatar className="cursor-pointer hover:shadow-md h-10 w-10">
+                          <AvatarImage
+                            src={
+                              user.user_metadata.avatar_url ||
+                              "https://github.com/shadcn.png"
+                            }
+                            alt={user.email || ""}
+                          />
+                          <AvatarFallback>
+                            {user.email ? user.email[0].toUpperCase() : "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        <DropdownMenuItem>
+                          <Link href="/dashboard" className="justify-center flex w-full text-lg text-primary font-semibold">
+                            Dashboard
+                          </Link>
+                        </DropdownMenuItem>
+                        <Separator />
+                        <DropdownMenuItem>
+                          <Button
+                            onClick={logout}
+                            disabled={isLoggingOut}
+                            type="button"
+                            className="bg-secondary text-white text-lg w-full justify-center flex mx-auto"
+                          >
+                            {isLoggingOut ? (
+                              <>
+                                <Spinner className="mr-2" />
+                                <span>Logging out...</span>
+                              </>
+                            ) : (
+                              <span>Logout</span>
+                            )}
+                          </Button>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <Link
+                      href={"/login"}
+                      className="w-full"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Button className="border border-secondary mt-2 w-full rounded-full bg-secondary px-8 py-5 text-lg font-bold text-white transition-colors duration-300 hover:bg-primary">
+                        Login
+                      </Button>
+                    </Link>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>
