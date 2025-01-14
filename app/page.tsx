@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import About from "@/components/LandingPage/About";
 import Achievements from "@/components/LandingPage/Achievements";
@@ -8,15 +8,15 @@ import Footer from "@/components/LandingPage/Footer";
 import Hero from "@/components/LandingPage/Hero";
 import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
-import { User } from "@supabase/supabase-js";
 import { useState, useEffect } from "react";
-import getUser from "@/utils/supabase/actions/getUser";
+import { getUser, getPatient } from "@/utils/supabase/actions/getUser";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { Patient } from "@/utils/supabase/types";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Patient | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
@@ -24,45 +24,51 @@ export default function Home() {
 
   const logout = async () => {
     setIsLoggingOut(true);
-    const supabaseClient = createClient()
+    const supabaseClient = createClient();
 
-    const { error } = await supabaseClient.auth.signOut()
+    const { error } = await supabaseClient.auth.signOut();
 
     if (!error) {
-      router.refresh()
+      router.refresh();
       setIsLoggingOut(false);
-      setUser(null)
+      setUser(null);
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
         variant: "success",
-      })
+      });
     }
-    if(error) {
+    if (error) {
       setIsLoggingOut(false);
       toast({
         title: "Error",
         description: "Failed to logout. Please try again.",
         variant: "destructive",
-      })
+      });
     }
-  }
+  };
 
   useEffect(() => {
     document.documentElement.classList.remove("dark");
     document.documentElement.removeAttribute("style");
 
     const fetchUser = async () => {
-      const userData = await getUser(); 
-      setUser(userData); 
+      const userData = await getUser();
+      if (userData === null) {
+        return;
+      }
+      if (userData.id) {
+        const patientData = await getPatient({ id: userData.id });
+        setUser(patientData);
+      }
     };
 
-    fetchUser(); 
-  }, []); 
+    fetchUser();
+  }, []);
 
   return (
     <div className="overflow-x-hidden">
-      <Navbar user={user} logout={logout} isLoggingOut={isLoggingOut} /> 
+      <Navbar user={user} logout={logout} isLoggingOut={isLoggingOut} />
       <Hero />
       <Achievements />
       <About />

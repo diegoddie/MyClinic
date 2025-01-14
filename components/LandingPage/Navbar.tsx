@@ -18,7 +18,6 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import Logo from "../utils/Logo";
-import { User } from "@supabase/supabase-js";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
+import { Patient } from "@/utils/supabase/types";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -38,7 +38,7 @@ const navItems = [
 ];
 
 interface NavbarProps {
-  user: User | null;
+  user: Patient | null;
   logout: () => void;
   isLoggingOut: boolean;
 }
@@ -76,13 +76,12 @@ export default function Navbar({ user, logout, isLoggingOut }: NavbarProps) {
                   <Avatar className="cursor-pointer hover:shadow-md h-14 w-14">
                     <AvatarImage
                       src={
-                        user.user_metadata.avatar_url ||
-                        "https://github.com/shadcn.png"
+                        user.profile_picture || undefined
                       }
                       alt={user.email || ""}
                     />
                     <AvatarFallback>
-                      {user.email ? user.email[0].toUpperCase() : "U"}
+                      {user.email[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
@@ -153,13 +152,12 @@ export default function Navbar({ user, logout, isLoggingOut }: NavbarProps) {
                         <Avatar className="cursor-pointer hover:shadow-md h-10 w-10">
                           <AvatarImage
                             src={
-                              user.user_metadata.avatar_url ||
-                              "https://github.com/shadcn.png"
+                              user.profile_picture || undefined
                             }
                             alt={user.email || ""}
                           />
                           <AvatarFallback>
-                            {user.email ? user.email[0].toUpperCase() : "U"}
+                            {user.email[0].toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
                       </DropdownMenuTrigger>

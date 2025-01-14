@@ -13,15 +13,15 @@ import { ThemeProvider } from "@/components/utils/theme-provider";
 import { redirect, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { User } from "@supabase/supabase-js";
-import getUser from "@/utils/supabase/actions/getUser";
+import { getUser, getPatient } from "@/utils/supabase/actions/getUser";
 import { useToast } from "@/hooks/use-toast";
+import { Patient } from "@/utils/supabase/types";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const sectionName = pathname?.split("/").pop();
 
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Patient | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { toast } = useToast();
 
@@ -57,7 +57,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       if(userData === null) {
         redirect('/')
       }
-      setUser(userData);
+      if(userData.id){
+        const patientData = await getPatient({ id: userData.id })
+        setUser(patientData)
+      }
     };
 
     fetchUser();
@@ -89,13 +92,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               <Avatar className="hover:shadow-md h-12 w-12">
                     <AvatarImage
                       src={
-                        user?.user_metadata.avatar_url ||
-                        "https://github.com/shadcn.png"
+                        user?.profile_picture || undefined
                       }
                       alt={user?.email || ""}
                     />
                     <AvatarFallback>
-                      {user?.email ? user.email[0].toUpperCase() : "U"}
+                      {user?.email[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
             </div>
