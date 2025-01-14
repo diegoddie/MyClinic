@@ -1,5 +1,6 @@
 "use server";
 
+import getURL from "@/utils/getURL";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 
@@ -12,7 +13,7 @@ export async function loginWithMagicLink(formData: FormData) {
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: 'https://my-clinic-vert.vercel.app/auth/confirm',
+      emailRedirectTo: getURL(),
     },
   });
 
@@ -31,7 +32,7 @@ export async function loginWithGoogle(){
   const { data,error } = await supabase.auth.signInWithOAuth({ 
     provider: "google" ,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      redirectTo: '/auth/callback',
     },
   });
 
