@@ -31,7 +31,7 @@ export async function loginWithMagicLink(formData: FormData) {
 export async function loginWithGoogle(){
   const supabase = await createClient();
   const redirectURL = getURL() + "auth/callback";
-  console.log(redirectURL);
+
   const { data,error } = await supabase.auth.signInWithOAuth({ 
     provider: "google" ,
     options: {
