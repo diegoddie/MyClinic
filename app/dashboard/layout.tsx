@@ -33,12 +33,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
     if (!error) {
       setIsLoggingOut(false);
-      setUser(null)
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
         variant: "success",
       })
+      
       redirect('/')
     }
     if(error) {

@@ -12,7 +12,7 @@ export async function loginWithMagicLink(formData: FormData) {
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: '/auth/confirm',
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
     },
   });
 
@@ -31,7 +31,7 @@ export async function loginWithGoogle(){
   const { data,error } = await supabase.auth.signInWithOAuth({ 
     provider: "google" ,
     options: {
-      redirectTo: '/auth/callback',
+      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
     },
   });
 
@@ -43,7 +43,6 @@ export async function loginWithGoogle(){
   }
 
   if (data.url) {
-    console.log(data.url)
     redirect(data.url) 
   }
 }
