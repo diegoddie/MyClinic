@@ -24,7 +24,7 @@ export function AvatarUpload({ avatar, onAvatarChange }: AvatarUploadProps) {
 
   return (
     <div className="flex items-center space-x-4">
-      <Avatar className="w-16 h-16 md:w-20 md:h-20">
+      <Avatar className="w-16 h-16 md:w-18 md:h-18">
         <AvatarImage src={avatar} alt="Profile picture" />
         <AvatarFallback>
           <User className="w-10 h-10" />

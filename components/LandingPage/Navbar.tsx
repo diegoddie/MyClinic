@@ -27,7 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
-import { Patient } from "@/utils/supabase/types";
+import { User } from "@/utils/supabase/types";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -38,7 +38,7 @@ const navItems = [
 ];
 
 interface NavbarProps {
-  user: Patient | null;
+  user: User | null;
   logout: () => void;
   isLoggingOut: boolean;
 }

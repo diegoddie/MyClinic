@@ -9,14 +9,14 @@ import Hero from "@/components/LandingPage/Hero";
 import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
 import { useState, useEffect } from "react";
-import { getUser, getPatient } from "@/utils/supabase/actions/getUser";
+import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { Patient } from "@/utils/supabase/types";
+import { User } from "@/utils/supabase/types";
 
 export default function Home() {
-  const [user, setUser] = useState<Patient | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
@@ -53,13 +53,13 @@ export default function Home() {
     document.documentElement.removeAttribute("style");
 
     const fetchUser = async () => {
-      const userData = await getUser();
-      if (userData === null) {
+      const authenticatedUser = await getAuth();
+      if (authenticatedUser === null) {
         return;
       }
-      if (userData.id) {
-        const patientData = await getPatient({ id: userData.id });
-        setUser(patientData);
+      if (authenticatedUser.id) {
+        const userData = await getUser({ id: authenticatedUser.id });
+        setUser(userData);
       }
     };
 

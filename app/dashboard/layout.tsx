@@ -13,15 +13,15 @@ import { ThemeProvider } from "@/components/utils/theme-provider";
 import { redirect, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { getUser, getPatient } from "@/utils/supabase/actions/getUser";
+import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
 import { useToast } from "@/hooks/use-toast";
-import { Patient } from "@/utils/supabase/types";
+import { User } from "@/utils/supabase/types";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const sectionName = pathname?.split("/").pop();
 
-  const [user, setUser] = useState<Patient | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { toast } = useToast();
 
@@ -53,13 +53,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const userData = await getUser();
-      if(userData === null) {
+      const authenticatedUser = await getAuth();
+      if(authenticatedUser === null) {
         redirect('/')
       }
-      if(userData.id){
-        const patientData = await getPatient({ id: userData.id })
-        setUser(patientData)
+      if(authenticatedUser.id){
+        const userData = await getUser({ id: authenticatedUser.id })
+        setUser(userData)
       }
     };
 

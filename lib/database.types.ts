@@ -46,7 +46,7 @@ export type Database = {
             foreignKeyName: "appointments_patient_id_fkey"
             columns: ["patient_id"]
             isOneToOne: false
-            referencedRelation: "patients"
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -81,7 +81,7 @@ export type Database = {
         }
         Relationships: []
       }
-      patients: {
+      users: {
         Row: {
           birth_date: string | null
           created_at: string | null
@@ -91,7 +91,8 @@ export type Database = {
           last_name: string | null
           phone_number: string | null
           profile_picture: string | null
-          taxId: string | null
+          role: Database["public"]["Enums"]["role"]
+          tax_id: string | null
         }
         Insert: {
           birth_date?: string | null
@@ -102,7 +103,8 @@ export type Database = {
           last_name?: string | null
           phone_number?: string | null
           profile_picture?: string | null
-          taxId?: string | null
+          role?: Database["public"]["Enums"]["role"]
+          tax_id?: string | null
         }
         Update: {
           birth_date?: string | null
@@ -113,7 +115,8 @@ export type Database = {
           last_name?: string | null
           phone_number?: string | null
           profile_picture?: string | null
-          taxId?: string | null
+          role?: Database["public"]["Enums"]["role"]
+          tax_id?: string | null
         }
         Relationships: []
       }
@@ -125,6 +128,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      role: "patient" | "admin"
       status: "pending" | "completed" | "confirmed"
     }
     CompositeTypes: {
