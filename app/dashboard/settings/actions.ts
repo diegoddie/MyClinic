@@ -6,12 +6,12 @@ import { revalidatePath } from "next/cache";
 
 export async function updateUser(data: ProfileFormValues, id: string, avatar?: File) {
   const supabase = await createClient();
-    console.log(avatar)
+  let avatarUrl: string | null = null;
+
   // Caricare l'avatar se presente
-  let avatarPath: string | null = null;
   if (avatar) {
-    const filePath = `users/${Date.now()}_${avatar.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const filePath = `user/${id}/${Date.now()}_${avatar.name}`;
+    const { error: uploadError } = await supabase.storage
       .from("avatar")
       .upload(filePath, avatar);
 
@@ -20,7 +20,14 @@ export async function updateUser(data: ProfileFormValues, id: string, avatar?: F
       return uploadError;
     }
 
-    avatarPath = uploadData?.path;
+    // Ottenere l'URL pubblico dell'avatar
+    const { data: publicUrlData } = supabase.storage.from("avatar").getPublicUrl(filePath);
+    if (publicUrlData?.publicUrl) {
+      avatarUrl = publicUrlData.publicUrl;
+    } else {
+      console.error("Error retrieving public URL for avatar");
+      return new Error("Unable to retrieve public URL for avatar");
+    }
   }
 
   // Aggiornare i dati dell'utente
@@ -32,7 +39,7 @@ export async function updateUser(data: ProfileFormValues, id: string, avatar?: F
       tax_id: data.taxId,
       birth_date: data.birthDate,
       phone_number: data.phoneNumber,
-      profile_picture: avatarPath || data.profilePicture, // Aggiorna solo se l'avatar è caricato
+      profile_picture: avatarUrl || data.profilePicture, // Usa l'URL pubblico o mantieni il valore esistente
     })
     .eq("id", id);
 

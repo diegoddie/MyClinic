@@ -68,7 +68,6 @@ export function UpdateUserForm({ user }: { user: User }) {
         ([key]) => dirtyFields[key as keyof ProfileFormValues]
       )
     );
-    console.log(changedData);
   
     setIsLoading(true);
   
@@ -142,6 +141,7 @@ export function UpdateUserForm({ user }: { user: User }) {
                       />
                       <Button
                         type="button"
+                        className="bg-secondary dark:text-black text-white dark:font-semibold"
                         onClick={() =>
                           document.getElementById("avatar-upload")?.click()
                         }
