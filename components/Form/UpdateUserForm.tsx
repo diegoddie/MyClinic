@@ -4,11 +4,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover"
-import {
   Form,
   FormControl,
   FormField,
@@ -30,18 +25,18 @@ import {
   profileFormSchema,
   ProfileFormValues,
 } from "@/lib/schemas/settingsSchema";
-import { AvatarUpload } from "../Dashboard/Settings/AvatarUpload";
 import { User } from "@/utils/supabase/types";
 import { updateUser } from "@/app/dashboard/settings/actions";
 import { Spinner } from "../ui/spinner";
-import { CalendarIcon } from "lucide-react";
-import { format } from "date-fns"
-import { cn } from "@/lib/utils";
-import { Calendar } from "../ui/calendar";
+import { useToast } from "@/hooks/use-toast";
+import { DateOfBirthCalendar } from "../Dashboard/Settings/DateOfBirthCalendar";
+import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
+import Image from "next/image";
 
-export function ProfileForm({ user }: { user: User }) {
-  const [avatar, setAvatar] = useState("https://github.com/shadcn.png");
+export function UpdateUserForm({ user }: { user: User }) {
   const [isLoading, setIsLoading] = useState(false);
+  const [avatar, setAvatar] = useState<File | null>();
+  const { toast } = useToast();
 
   // Imposta i valori predefiniti per il modulo, utilizzando i dati dell'utente se presenti
   const form = useForm<ProfileFormValues>({
@@ -50,10 +45,21 @@ export function ProfileForm({ user }: { user: User }) {
       firstName: user?.first_name || "",
       lastName: user?.last_name || "",
       taxId: user?.tax_id || "",
-      birthDate: user?.birth_date || "",
+      birthDate: user?.birth_date ? new Date(user.birth_date) : undefined,
+      profilePicture: user?.profile_picture,
       phoneNumber: user?.phone_number || "",
     },
   });
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const newAvatar = event.target.files[0];
+      setAvatar(newAvatar);
+  
+      // Segna esplicitamente il campo 'profilePicture' come dirty
+      form.setValue('profilePicture', newAvatar, {shouldDirty: true}); 
+    }
+  };
 
   async function onSubmit(data: ProfileFormValues) {
     const { dirtyFields } = form.formState;
@@ -62,17 +68,31 @@ export function ProfileForm({ user }: { user: User }) {
         ([key]) => dirtyFields[key as keyof ProfileFormValues]
       )
     );
-
-    if (Object.keys(changedData).length > 0) {
-      setIsLoading(true);
-      console.log("Sending only dirty fields:", changedData);
-      await updateUser(changedData, user.id);
+    console.log(changedData);
+  
+    setIsLoading(true);
+  
+    const error = await updateUser(changedData, user.id, avatar ?? undefined); // Passa l'avatar
+  
+    if (error) {
       setIsLoading(false);
-      form.reset(data); // Update default values with new values
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      });
     } else {
-      console.log("No changes detected");
+      setIsLoading(false);
+      toast({
+        title: "User updated",
+        description: "You have successfully updated your profile",
+        variant: "success",
+      });
+      form.reset(data);
+      setAvatar(null); // Reset dell'avatar selezionato
     }
   }
+  
 
   return (
     <Card className="h-full">
@@ -85,14 +105,62 @@ export function ProfileForm({ user }: { user: User }) {
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-4">
-            <AvatarUpload avatar={avatar} onAvatarChange={setAvatar} />
+            <FormField
+              control={form.control}
+              name="profilePicture"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Profile Picture</FormLabel>
+                  <FormControl>
+                    <div className="space-x-4 flex justify-between items-center">
+                      {avatar ? (
+                        <Image
+                          src={URL.createObjectURL(avatar)}
+                          alt="User Avatar Preview"
+                          className="w-16 h-16 rounded-full object-cover"
+                          width={64}
+                          height={64}
+                        />
+                      ) : user?.profile_picture ? (
+                        <Image
+                          src={user.profile_picture}
+                          alt="User Avatar"
+                          className="w-16 h-16 rounded-full object-cover"
+                          width={64}
+                          height={64}
+                        />
+                      ) : (
+                        <GetAvatarFallback email={user?.email || ""} />
+                      )}
+
+                      <Input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
+                        className="hidden"
+                        id="avatar-upload"
+                      />
+                      <Button
+                        type="button"
+                        onClick={() =>
+                          document.getElementById("avatar-upload")?.click()
+                        }
+                      >
+                        {avatar ? "Change Photo" : "Upload Photo"}
+                      </Button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
                   value={user?.email}
                   readOnly
-                  className="bg-slate-200 cursor-not-allowed"
+                  className="bg-slate-200 dark:bg-slate-600  cursor-not-allowed"
                 />
               </FormControl>
             </FormItem>
@@ -141,43 +209,12 @@ export function ProfileForm({ user }: { user: User }) {
               name="birthDate"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+                  <FormLabel>Date of birth</FormLabel>
                   <FormControl>
-                    <Button
-                      variant={"outline"}
-                      className={cn(
-                        "w-full pl-3 text-left",
-                        !field.value && "text-muted-foreground"
-                      )}
-                    >
-                      {field.value ? (
-                        format(field.value, "PPP")
-                      ) : (
-                        <span>Pick a date</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <DateOfBirthCalendar {...field} />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    
-                    captionLayout="dropdown"
-                    fixedWeeks={true}
-                    selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date("1900-01-01")
-                    }
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
+                  <FormMessage />
+                </FormItem>
               )}
             />
             <FormField

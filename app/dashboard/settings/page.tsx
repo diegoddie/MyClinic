@@ -1,4 +1,5 @@
-import { ProfileForm } from "@/components/Form/UpdateProfileInfoForm";
+
+import { UpdateUserForm } from "@/components/Form/UpdateUserForm";
 import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
 
 export default async function Settings() {
@@ -8,7 +9,7 @@ export default async function Settings() {
   return (
     <div className="py-2">
       <div className="justify-center flex flex-col md:flex-row">
-        {userData && <ProfileForm user={userData} />}
+        {userData && <UpdateUserForm user={userData} />}
       </div>
     </div>
   );
