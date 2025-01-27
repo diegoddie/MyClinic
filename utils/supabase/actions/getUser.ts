@@ -2,7 +2,7 @@
 
 import { createClient } from "../server";
 import { User as AuthUser } from "@supabase/supabase-js";
-import { User } from "../types";
+import { User, Doctor, Patient } from "../types";
 
 export async function getAuth(): Promise<AuthUser | null> {
   const supabase = await createClient();
@@ -16,12 +16,39 @@ export async function getAuth(): Promise<AuthUser | null> {
   return data?.user || null;
 }
 
-export async function getUser({ id }: {id: string}):Promise<User | null>{
+export async function getUser({ id }: { id: string }): Promise<User | Doctor | Patient | null> {
   const supabase = await createClient();
-  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
-  if (error) {
-    console.error("Get user error:", error);
-    return null
+
+  // Fetch the user's role first
+  const { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (userError || !userData) {
+    console.error("Get user error:", userError);
+    return null;
   }
+
+  // Handle different roles
+  if (userData.role === 'admin') {
+    return userData; // Return basic user data for admins
+  }
+
+  const tableName = userData.role === 'doctor' ? 'doctors' : 'patients';
+
+  // Fetch user-specific data from the corresponding table
+  const { data, error } = await supabase
+    .from(tableName)
+    .select('*')
+    .eq('user_id', id)
+    .single();
+
+  if (error) {
+    console.error(`Get ${tableName} data error:`, error);
+    return null;
+  }
+  
   return data;
 }

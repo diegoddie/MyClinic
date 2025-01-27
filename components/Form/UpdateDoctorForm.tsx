@@ -1,8 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
@@ -11,8 +10,16 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { updateDoctor } from "@/app/dashboard/doctors/actions";
+import { useToast } from "@/hooks/use-toast";
+import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
+import { Doctor } from "@/utils/supabase/types";
+import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
 import {
   Card,
   CardContent,
@@ -21,33 +28,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  profileFormSchema,
-  ProfileFormValues,
-} from "@/lib/schemas/settingsSchema";
-import { User } from "@/utils/supabase/types";
-import { updateUser } from "@/app/dashboard/settings/actions";
-import { Spinner } from "../ui/spinner";
-import { useToast } from "@/hooks/use-toast";
-import { DateOfBirthCalendar } from "../Dashboard/Settings/DateOfBirthCalendar";
-import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
-import Image from "next/image";
 
-export function UpdateUserForm({ user }: { user: User }) {
+export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
   const [isLoading, setIsLoading] = useState(false);
   const [avatar, setAvatar] = useState<File | null>();
   const { toast } = useToast();
 
-  // Imposta i valori predefiniti per il modulo, utilizzando i dati dell'utente se presenti
-  const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema),
+  const form = useForm<DoctorFormValues>({
+    resolver: zodResolver(doctorSchema),
     defaultValues: {
-      firstName: user?.first_name || "",
-      lastName: user?.last_name || "",
-      taxId: user?.tax_id || "",
-      birthDate: user?.birth_date ? new Date(user.birth_date) : undefined,
-      profilePicture: user?.profile_picture,
-      phoneNumber: user?.phone_number || "",
+      firstName: doctor?.first_name,
+      lastName: doctor?.last_name,
+      email: doctor?.email,
+      specialization: doctor?.specialization ?? undefined,
+      phoneNumber: doctor?.phone_number ?? undefined,
+      profilePicture: doctor?.profile_picture,
     },
   });
 
@@ -55,24 +50,34 @@ export function UpdateUserForm({ user }: { user: User }) {
     if (event.target.files && event.target.files[0]) {
       const newAvatar = event.target.files[0];
       setAvatar(newAvatar);
-  
-      // Segna esplicitamente il campo 'profilePicture' come dirty
-      form.setValue('profilePicture', newAvatar, {shouldDirty: true}); 
+
+      form.setValue("profilePicture", newAvatar, { shouldDirty: true });
     }
   };
 
-  async function onSubmit(data: ProfileFormValues) {
+  async function onSubmit(data: DoctorFormValues) {
     const { dirtyFields } = form.formState;
-    const changedData = Object.fromEntries(
-      Object.entries(data).filter(
-        ([key]) => dirtyFields[key as keyof ProfileFormValues]
-      )
-    );
-  
+    const changedData: DoctorFormValues = {
+      email: doctor.email,
+      firstName: doctor.first_name,
+      lastName: doctor.last_name,
+      phoneNumber: doctor.phone_number ?? "",
+      specialization: doctor.specialization ?? "",
+      profilePicture: doctor.profile_picture,
+      ...Object.fromEntries(
+        Object.entries(data).filter(
+          ([key]) => dirtyFields[key as keyof DoctorFormValues]
+        )
+      ),
+    };
     setIsLoading(true);
-  
-    const error = await updateUser(changedData, user.id, avatar ?? undefined); // Passa l'avatar
-  
+
+    const error = await updateDoctor(
+      changedData,
+      doctor.id,
+      avatar ?? undefined
+    ); // Passa l'avatar
+
     if (error) {
       setIsLoading(false);
       toast({
@@ -83,15 +88,14 @@ export function UpdateUserForm({ user }: { user: User }) {
     } else {
       setIsLoading(false);
       toast({
-        title: "User updated",
-        description: "You have successfully updated your profile",
+        title: "Doctor Created",
+        description: "You have successfully added a new doctor",
         variant: "success",
       });
       form.reset(data);
       setAvatar(null); // Reset dell'avatar selezionato
     }
   }
-  
 
   return (
     <Card className="h-full">
@@ -120,16 +124,16 @@ export function UpdateUserForm({ user }: { user: User }) {
                           width={64}
                           height={64}
                         />
-                      ) : user?.profile_picture ? (
+                      ) : doctor?.profile_picture ? (
                         <Image
-                          src={user.profile_picture}
+                          src={doctor.profile_picture}
                           alt="User Avatar"
                           className="w-16 h-16 rounded-full object-cover"
                           width={64}
                           height={64}
                         />
                       ) : (
-                        <GetAvatarFallback email={user?.email || ""} />
+                        <GetAvatarFallback email={doctor?.email || ""} />
                       )}
 
                       <Input
@@ -158,7 +162,7 @@ export function UpdateUserForm({ user }: { user: User }) {
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input
-                  value={user?.email}
+                  value={doctor?.email}
                   readOnly
                   className="bg-slate-200 dark:bg-slate-600  cursor-not-allowed"
                 />
@@ -193,25 +197,12 @@ export function UpdateUserForm({ user }: { user: User }) {
             />
             <FormField
               control={form.control}
-              name="taxId"
+              name="specialization"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tax ID</FormLabel>
+                  <FormLabel>Specialization</FormLabel>
                   <FormControl>
                     <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="birthDate"
-              render={({ field }) => (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Date of birth</FormLabel>
-                  <FormControl>
-                    <DateOfBirthCalendar {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

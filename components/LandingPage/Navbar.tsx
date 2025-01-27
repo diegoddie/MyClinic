@@ -27,7 +27,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
-import { User } from "@/utils/supabase/types";
+import { Doctor, Patient, User } from "@/utils/supabase/types";
+import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -38,7 +39,7 @@ const navItems = [
 ];
 
 interface NavbarProps {
-  user: User | null;
+  user: User | Doctor | Patient | null;
   logout: () => void;
   isLoggingOut: boolean;
 }
@@ -73,17 +74,22 @@ export default function Navbar({ user, logout, isLoggingOut }: NavbarProps) {
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer hover:shadow-md h-14 w-14">
-                    <AvatarImage
-                      src={
-                        user.profile_picture || undefined
-                      }
-                      alt={user.email || ""}
-                    />
-                    <AvatarFallback>
-                      {user.email[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
+                  {'profile_picture' in user ? (
+                    <Avatar className="cursor-pointer hover:shadow-md h-14 w-14">
+                      <AvatarImage
+                        src={user.profile_picture || undefined}
+                        alt={user.email || ""}
+                      />
+
+                      <AvatarFallback>
+                        {user.email[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className="cursor-pointer h-14 w-14">
+                      <GetAvatarFallback email={user.email} />
+                    </div>
+                  )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="">
                   <DropdownMenuItem className="">
@@ -149,21 +155,28 @@ export default function Navbar({ user, logout, isLoggingOut }: NavbarProps) {
                   {user ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Avatar className="cursor-pointer hover:shadow-md h-10 w-10">
-                          <AvatarImage
-                            src={
-                              user.profile_picture || undefined
-                            }
-                            alt={user.email || ""}
-                          />
-                          <AvatarFallback>
-                            {user.email[0].toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
+                        {'profile_picture' in user ? (
+                          <Avatar className="cursor-pointer hover:shadow-md h-10 w-10">
+                            <AvatarImage
+                              src={user.profile_picture || undefined}
+                              alt={user.email || ""}
+                            />
+                            <AvatarFallback>
+                              {user.email[0].toUpperCase()}
+                            </AvatarFallback>
+                          </Avatar>
+                        ) : (
+                          <div className="cursor-pointer h-14 w-14">
+                            <GetAvatarFallback email={user.email} />
+                          </div>
+                        )}
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         <DropdownMenuItem>
-                          <Link href="/dashboard" className="justify-center flex w-full text-lg text-primary font-semibold">
+                          <Link
+                            href="/dashboard"
+                            className="justify-center flex w-full text-lg text-primary font-semibold"
+                          >
                             Dashboard
                           </Link>
                         </DropdownMenuItem>

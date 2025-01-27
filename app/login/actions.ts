@@ -13,7 +13,10 @@ export async function loginWithMagicLink(formData: FormData) {
     email,
     options: {
       shouldCreateUser: true,
-      emailRedirectTo: getURL()
+      emailRedirectTo: getURL(),
+      data: {
+        role: "patient",
+      }
     },
     
   });

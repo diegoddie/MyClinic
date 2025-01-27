@@ -1,5 +1,6 @@
-
-import { UpdateUserForm } from "@/components/Form/UpdateUserForm";
+import UpdateDoctorForm from "@/components/Form/UpdateDoctorForm";
+import { UpdatePatientForm } from "@/components/Form/UpdatePatientForm";
+import { isDoctor, isPatient } from "@/utils/getRole";
 import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
 
 export default async function Settings() {
@@ -9,7 +10,15 @@ export default async function Settings() {
   return (
     <div className="py-2">
       <div className="justify-center flex flex-col md:flex-row">
-        {userData && <UpdateUserForm user={userData} />}
+        {isDoctor(userData) ? (
+          <UpdateDoctorForm doctor={userData} />
+        ) : isPatient(userData) ? (
+          <UpdatePatientForm patient={userData} />
+        ) : (
+          <h2 className="text-lg font-semibold text-gray-600 dark:text-gray-300">
+            Page not available for an admin
+          </h2>
+        )}
       </div>
     </div>
   );

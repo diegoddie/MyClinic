@@ -13,10 +13,10 @@ import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
-import { User } from "@/utils/supabase/types";
+import { Doctor, Patient, User } from "@/utils/supabase/types";
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | Doctor | Patient | null>(null);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const router = useRouter();
