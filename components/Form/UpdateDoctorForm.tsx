@@ -15,7 +15,6 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateDoctor } from "@/app/dashboard/doctors/actions";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
 import { Doctor } from "@/utils/supabase/types";
@@ -29,6 +28,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Mail, Phone, Stethoscope, User } from "lucide-react";
+import { updateDoctor } from "@/utils/supabase/actions/doctorActions";
 
 export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +41,7 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
       firstName: doctor?.first_name,
       lastName: doctor?.last_name,
       email: doctor?.email,
-      specialization: doctor?.specialization ?? undefined,
+      specialization: doctor?.specialization,
       phoneNumber: doctor?.phone_number ?? undefined,
       profilePicture: doctor?.profile_picture,
     },
@@ -57,24 +57,10 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
   };
 
   async function onSubmit(data: DoctorFormValues) {
-    const { dirtyFields } = form.formState;
-    const changedData: DoctorFormValues = {
-      email: doctor.email,
-      firstName: doctor.first_name,
-      lastName: doctor.last_name,
-      phoneNumber: doctor.phone_number ?? "",
-      specialization: doctor.specialization ?? "",
-      profilePicture: doctor.profile_picture,
-      ...Object.fromEntries(
-        Object.entries(data).filter(
-          ([key]) => dirtyFields[key as keyof DoctorFormValues]
-        )
-      ),
-    };
     setIsLoading(true);
 
     const error = await updateDoctor(
-      changedData,
+      data,
       doctor.id,
       avatar ?? undefined
     ); // Passa l'avatar

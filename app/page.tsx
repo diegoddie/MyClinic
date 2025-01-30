@@ -9,11 +9,12 @@ import Hero from "@/components/LandingPage/Hero";
 import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
 import { useState, useEffect } from "react";
-import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
+
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { Doctor, Patient, User } from "@/utils/supabase/types";
+import { getAuth, getUser } from "@/utils/supabase/actions/authActions";
 
 export default function Home() {
   const [user, setUser] = useState<User | Doctor | Patient | null>(null);

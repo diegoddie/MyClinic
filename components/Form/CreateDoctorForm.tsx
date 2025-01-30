@@ -15,10 +15,10 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Spinner } from "../ui/spinner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { sendDoctorMagicLink } from "@/app/dashboard/doctors/actions";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
 import { Mail, Phone, Stethoscope, User } from "lucide-react";
+import { sendDoctorMagicLink } from "@/utils/supabase/actions/adminActions";
 
 export default function CreateDoctorForm() {
   const [isLoading, setIsLoading] = useState(false);

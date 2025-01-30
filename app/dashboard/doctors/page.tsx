@@ -7,10 +7,12 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import CreateDoctorForm from "@/components/Form/CreateDoctorForm";
-import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
+
 import DoctorsTable from "@/components/Dashboard/Doctors/DoctorsTable";
-import { getDoctors } from "./actions";
+
 import { isDoctor, isAdmin } from "@/utils/getRole";
+import { getDoctors } from "@/utils/supabase/actions/doctorActions";
+import { getAuth, getUser } from "@/utils/supabase/actions/authActions";
 
 export default async function Doctors() {
   const authenticatedUser = await getAuth();

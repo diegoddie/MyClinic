@@ -13,11 +13,12 @@ import { ThemeProvider } from "@/components/utils/theme-provider";
 import { redirect, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
+
 import { useToast } from "@/hooks/use-toast";
 import { Doctor, Patient, User } from "@/utils/supabase/types";
 import GetAvatarFallback from "@/components/Dashboard/Settings/GetAvatarFallback";
 import { isAdmin } from "@/utils/getRole";
+import { getAuth, getUser } from "@/utils/supabase/actions/authActions";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

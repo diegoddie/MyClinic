@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "../ui/spinner";
-import { loginWithGoogle, loginWithMagicLink } from "@/app/login/actions";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { emailSchema } from "@/lib/schemas/loginSchema";
@@ -26,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
+import { loginWithGoogle, loginWithMagicLink } from "@/utils/supabase/actions/loginActions";
 
 export default function LoginForm({
   className,

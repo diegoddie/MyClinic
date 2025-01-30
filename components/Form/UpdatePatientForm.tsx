@@ -22,7 +22,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Patient } from "@/utils/supabase/types";
-import { updatePatient } from "@/app/dashboard/settings/actions";
 import { Spinner } from "../ui/spinner";
 import { useToast } from "@/hooks/use-toast";
 import { DateOfBirthCalendar } from "../Dashboard/Settings/DateOfBirthCalendar";
@@ -30,6 +29,7 @@ import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
 import Image from "next/image";
 import { PatientFormValues, patientSchema } from "@/lib/schemas/patientSchema";
 import { IdCard, Mail, Phone, User } from "lucide-react";
+import { updatePatient } from "@/utils/supabase/actions/patientActions";
 
 export function UpdatePatientForm({ patient }: { patient: Patient }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,20 +60,10 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
   };
 
   async function onSubmit(data: PatientFormValues) {
-    const { dirtyFields } = form.formState;
-    const changedData = {
-      ...form.getValues(),
-      ...Object.fromEntries(
-        Object.entries(data).filter(
-          ([key]) => dirtyFields[key as keyof PatientFormValues]
-        )
-      ),
-    };
-
     setIsLoading(true);
 
     const error = await updatePatient(
-      changedData,
+      data,
       patient,
       avatar ?? undefined
     ); // Passa l'avatar

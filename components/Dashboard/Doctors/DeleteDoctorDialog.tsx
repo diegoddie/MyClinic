@@ -1,4 +1,3 @@
-import { deleteDoctor } from "@/app/dashboard/doctors/actions";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,6 +10,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast";
+import { deleteDoctor } from "@/utils/supabase/actions/adminActions";
 import { Trash2 } from "lucide-react";
 
 export default function DeleteDoctorDialog({ doctorId }: { doctorId: string }) {

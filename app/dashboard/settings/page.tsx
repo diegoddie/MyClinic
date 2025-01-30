@@ -1,7 +1,7 @@
 import UpdateDoctorForm from "@/components/Form/UpdateDoctorForm";
 import { UpdatePatientForm } from "@/components/Form/UpdatePatientForm";
 import { isDoctor, isPatient } from "@/utils/getRole";
-import { getAuth, getUser } from "@/utils/supabase/actions/getUser";
+import { getAuth, getUser } from "@/utils/supabase/actions/authActions";
 
 export default async function Settings() {
   const authenticatedUser = await getAuth();

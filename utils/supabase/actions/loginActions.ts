@@ -18,7 +18,6 @@ export async function loginWithMagicLink(formData: FormData) {
         role: "patient",
       }
     },
-    
   });
   
   if (error) {
