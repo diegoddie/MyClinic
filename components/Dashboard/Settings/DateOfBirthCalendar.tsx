@@ -84,12 +84,15 @@ export function DateOfBirthCalendar({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal dark:bg-[#09090b] bg-white",
+            "w-full justify-start text-left font-normal dark:bg-[#09090b] bg-white relative",
             !date && "text-muted-foreground"
           )}
         >
-          <CalendarIcon />
+          <CalendarIcon className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+          <span className="pl-4">
           {date ? format(date, "PPP") : <span>Pick a date</span>}
+          </span>
+          
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

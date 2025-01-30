@@ -28,6 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Mail, Phone, Stethoscope, User } from "lucide-react";
 
 export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -133,7 +134,9 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
                           height={64}
                         />
                       ) : (
-                        <GetAvatarFallback email={doctor?.email || ""} />
+                        <div className="h-16 w-16">
+                          <GetAvatarFallback email={doctor?.email || ""} />
+                        </div>
                       )}
 
                       <Input
@@ -161,11 +164,15 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
+                <div className="relative">
+                <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   value={doctor?.email}
                   readOnly
-                  className="bg-slate-200 dark:bg-slate-600  cursor-not-allowed"
+                  className="bg-slate-200 dark:bg-slate-600 pl-8 cursor-not-allowed"
                 />
+                </div>
+                
               </FormControl>
             </FormItem>
 
@@ -176,7 +183,10 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                  <div className="relative">
+                      <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -189,7 +199,10 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                  <div className="relative">
+                      <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -202,7 +215,10 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
                 <FormItem>
                   <FormLabel>Specialization</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                  <div className="relative">
+                    <Stethoscope className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -215,7 +231,10 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input type="tel" {...field} />
+                  <div className="relative">
+                      <Phone className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input type="tel" {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

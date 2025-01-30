@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { sendDoctorMagicLink } from "@/app/dashboard/doctors/actions";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
+import { Mail, Phone, Stethoscope, User } from "lucide-react";
 
 export default function CreateDoctorForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -38,7 +39,7 @@ export default function CreateDoctorForm() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const newAvatar = event.target.files[0];
-      
+
       setAvatar(newAvatar);
     }
   };
@@ -126,7 +127,10 @@ export default function CreateDoctorForm() {
               <FormItem>
                 <FormLabel>First Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <div className="relative">
+                    <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -139,7 +143,10 @@ export default function CreateDoctorForm() {
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <div className="relative">
+                    <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -152,7 +159,10 @@ export default function CreateDoctorForm() {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <div className="relative">
+                    <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -165,7 +175,10 @@ export default function CreateDoctorForm() {
               <FormItem>
                 <FormLabel>Specialization</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <div className="relative">
+                    <Stethoscope className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -178,7 +191,10 @@ export default function CreateDoctorForm() {
               <FormItem>
                 <FormLabel>Phone Number</FormLabel>
                 <FormControl>
-                  <Input {...field} />
+                  <div className="relative">
+                    <Phone className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input {...field} className="pl-8" />
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>

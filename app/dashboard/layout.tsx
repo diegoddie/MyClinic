@@ -64,7 +64,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         if (userData === null) {
           redirect("/");
         }
-        console.log(userData)
+        
         setUser(userData);
       }
     };

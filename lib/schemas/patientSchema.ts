@@ -22,16 +22,12 @@ export const patientSchema = z.object({
     .string()
     .min(2, {
       message: "First name must be at least 2 characters.",
-    })
-    .optional()
-    .or(z.literal("")),
+    }),
   lastName: z
     .string()
     .min(2, {
       message: "Last name must be at least 2 characters.",
-    })
-    .optional()
-    .or(z.literal("")),
+    }),
   profilePicture: z
     .union([
       z.instanceof(File).refine(fileValidator, {
@@ -45,17 +41,13 @@ export const patientSchema = z.object({
     .string()
     .length(16, {
       message: "Tax ID must be exactly 16 characters.",
-    })
-    .optional()
-    .or(z.literal("")),
-  birthDate: z.date().optional(),
+    }),
+  birthDate: z.date(),
   phoneNumber: z
     .string()
     .regex(/^\+?[1-9]\d{1,14}$/, {
       message: "Please enter a valid phone number.",
-    })
-    .optional()
-    .or(z.literal("")),
+    }),
 });
 
 export type PatientFormValues = z.infer<typeof patientSchema>;

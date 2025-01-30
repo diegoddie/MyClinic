@@ -29,6 +29,7 @@ import { DateOfBirthCalendar } from "../Dashboard/Settings/DateOfBirthCalendar";
 import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
 import Image from "next/image";
 import { PatientFormValues, patientSchema } from "@/lib/schemas/patientSchema";
+import { IdCard, Mail, Phone, User } from "lucide-react";
 
 export function UpdatePatientForm({ patient }: { patient: Patient }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -60,11 +61,14 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
 
   async function onSubmit(data: PatientFormValues) {
     const { dirtyFields } = form.formState;
-    const changedData = Object.fromEntries(
-      Object.entries(data).filter(
-        ([key]) => dirtyFields[key as keyof PatientFormValues]
-      )
-    );
+    const changedData = {
+      ...form.getValues(),
+      ...Object.fromEntries(
+        Object.entries(data).filter(
+          ([key]) => dirtyFields[key as keyof PatientFormValues]
+        )
+      ),
+    };
 
     setIsLoading(true);
 
@@ -159,11 +163,15 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input
-                  value={patient?.email}
-                  readOnly
-                  className="bg-slate-200 dark:bg-slate-600  cursor-not-allowed"
-                />
+                <div className="relative">
+                  <Mail className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    value={patient?.email}
+                    readOnly
+                    className="bg-slate-200 dark:bg-slate-600 cursor-not-allowed pl-8"
+                  />
+                </div>
+                
               </FormControl>
             </FormItem>
 
@@ -174,7 +182,10 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
                 <FormItem>
                   <FormLabel>First Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <div className="relative">
+                      <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -187,7 +198,10 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
                 <FormItem>
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <div className="relative">
+                      <User className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -200,7 +214,10 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
                 <FormItem>
                   <FormLabel>Tax ID</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <div className="relative">
+                      <IdCard className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -226,7 +243,10 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input type="tel" {...field} />
+                    <div className="relative">
+                      <Phone className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input type="tel" {...field} className="pl-8" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
