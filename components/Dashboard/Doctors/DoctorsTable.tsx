@@ -26,19 +26,21 @@ import {
 } from "@/components/ui/pagination";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Doctor } from "@/utils/supabase/types";
+import { Doctor, Patient, User } from "@/utils/supabase/types";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteDoctorDialog from "./DeleteDoctorDialog";
+import { isAdmin } from "@/utils/getRole";
 
 export default function DoctorsTable({
   doctors,
-  isAdmin,
+  user
 }: {
   doctors: Doctor[];
-  isAdmin: boolean;
+  user: Doctor | Patient | User
 }) {
   const [currentPage, setCurrentPage] = useState(1);
+  const userIsAdmin = isAdmin(user) === true;
 
   const itemsPerPage = 5;
   const totalPages = Math.ceil(doctors.length / itemsPerPage);
@@ -66,7 +68,7 @@ export default function DoctorsTable({
               <TableHead>CONTACT</TableHead>
               <TableHead>SPECIALIZATION</TableHead>
               <TableHead>CALENDAR</TableHead>
-              {isAdmin && <TableHead>ACTIONS</TableHead>}
+              {userIsAdmin && <TableHead>ACTIONS</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -108,7 +110,7 @@ export default function DoctorsTable({
                     PLACEHOLDER
                   </div>
                 </TableCell>
-                {isAdmin && (
+                {userIsAdmin && (
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

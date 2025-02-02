@@ -25,41 +25,82 @@ import MyClinicLogo from "@/public/MYClinic.png";
 import Link from "next/link";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
+import { logout } from "@/utils/supabase/actions/authActions";
+import { useToast } from "@/hooks/use-toast";
+import { redirect } from "next/navigation";
+import { isAdmin, isDoctor, isPatient } from "@/utils/getRole";
+import { useState } from "react";
+import { Doctor, Patient, User } from "@/utils/supabase/types";
 
-const items = [
+const menuItems = [
   {
     title: "Dashboard",
     url: "/dashboard",
     icon: LayoutDashboard,
+    roles: ["admin", "doctor", "patient"], 
   },
   {
-    title: "Visits",
-    url: "/dashboard/visits",
+    title: "Appointments",
+    url: "/appointments",
     icon: Stethoscope,
+    roles: ["admin", "doctor", "patient"],
   },
   {
     title: "Doctors",
-    url: "/dashboard/doctors",
+    url: "/doctors",
     icon: Users,
+    roles: ["admin", "patient"],
   },
   {
     title: "Settings",
-    url: "/dashboard/settings",
+    url: "/settings",
     icon: Settings,
+    roles: ["doctor", "patient"],
   },
 ];
 
-interface DashboardSidebarProps {
-  logout: () => void;
-  isLoggingOut: boolean;
-}
-
-export default function DashboardSidebar({ logout, isLoggingOut }: DashboardSidebarProps) {
+export default function DashboardSidebar({ user } : { user: Patient | Doctor | User }) {
   const { open, openMobile, setOpenMobile } = useSidebar();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { toast } = useToast();
+
+  const filteredItems = menuItems.filter((item) => {
+    if (isAdmin(user)) {
+      return item.roles.includes("admin");
+    }
+    if (isDoctor(user)) {
+      return item.roles.includes("doctor");
+    }
+    if (isPatient(user)) {
+      return item.roles.includes("patient");
+    }
+  });
 
   const handleLinkClick = () => {
     if (openMobile) setOpenMobile(false);
   };
+
+  const handleLogout = async () => {
+      setIsLoading(true);
+      const error = await logout();
+      if (error) {
+        setIsLoading(false);
+        toast({
+          title: "Error",
+          description: "Failed to logout. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setIsLoading(false);;
+        toast({
+          title: "Logged out",
+          description: "You have been successfully logged out",
+          variant: "success",
+        });
+        redirect("/");
+      }
+    }
 
   return (
     <Sidebar
@@ -93,7 +134,7 @@ export default function DashboardSidebar({ logout, isLoggingOut }: DashboardSide
       <SidebarContent>
         <SidebarGroup>
           <SidebarMenu>
-            {items.map((item) => (
+            {filteredItems.map((item) => (
               <SidebarMenuItem key={item.title}>
                 {item.title.toLowerCase() === "settings" && (
                   <Separator className="my-2 bg-black/30 dark:bg-slate-500" />
@@ -118,11 +159,11 @@ export default function DashboardSidebar({ logout, isLoggingOut }: DashboardSide
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
-              onClick={logout}
+              onClick={handleLogout}
               className="w-full rounded-md p-2"
-              disabled={isLoggingOut}
+              disabled={isLoading}
             >
-              {isLoggingOut ? (
+              {isLoading ? (
                 <>
                   <Spinner className="mr-2" />
                   <span>Logging out..</span>

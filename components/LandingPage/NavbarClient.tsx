@@ -1,3 +1,5 @@
+// app/components/NavbarClient.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -40,10 +42,9 @@ const navItems = [
   { name: "Contacts", href: "#contacts" },
 ];
 
-export default function Navbar({ user } : { user: Patient | Doctor | User | null }) {
+export function NavbarClient({ user } : { user: Patient | Doctor | User | null }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-
   const { toast } = useToast();
 
   const handleLogout = async () => {
@@ -64,7 +65,7 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
         variant: "success",
       });
     }
-  }
+  };
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white py-1 md:py-4">
@@ -93,13 +94,12 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  {'profile_picture' in user ? (
+                  {"profile_picture" in user ? (
                     <Avatar className="cursor-pointer hover:shadow-md h-14 w-14">
                       <AvatarImage
                         src={user.profile_picture || undefined}
                         alt={user.email || ""}
                       />
-
                       <AvatarFallback>
                         {user.email[0].toUpperCase()}
                       </AvatarFallback>
@@ -110,8 +110,8 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
                     </div>
                   )}
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="">
-                  <DropdownMenuItem className="">
+                <DropdownMenuContent>
+                  <DropdownMenuItem>
                     <Link
                       href="/dashboard"
                       className=" text-primary font-semibold text-lg items-center justify-center mx-auto"
@@ -174,7 +174,7 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
                   {user ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        {'profile_picture' in user ? (
+                        {"profile_picture" in user ? (
                           <Avatar className="cursor-pointer hover:shadow-md h-10 w-10">
                             <AvatarImage
                               src={user.profile_picture || undefined}

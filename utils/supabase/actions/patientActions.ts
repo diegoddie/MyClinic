@@ -16,7 +16,7 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
     
   if (!isPatient(userData)) {
     console.error("User is not a patient");
-    return new Error("User is not a patient");
+    return { data: null, error: new Error("User is not a patient") }; 
   }
 
   let avatarUrl: string | null = null;
@@ -30,7 +30,7 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
 
     if (uploadError) {
       console.error("Error uploading avatar:", uploadError);
-      return uploadError;
+      return { data: null, error: uploadError };
     }
 
     // Ottenere l'URL pubblico dell'avatar
@@ -39,12 +39,12 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
       avatarUrl = publicUrlData.publicUrl;
     } else {
       console.error("Error retrieving public URL for avatar");
-      return new Error("Unable to retrieve public URL for avatar");
+      return { data: null, error: new Error("Unable to retrieve public URL for avatar") };
     }
   }
 
   // Aggiornare i dati dell'utente
-  const { error } = await supabase
+  const { data: updatedPatient, error } = await supabase
     .from("patients")
     .update({
       first_name: data.firstName,
@@ -54,12 +54,16 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
       phone_number: data.phoneNumber,
       profile_picture: avatarUrl || data.profilePicture,
     })
-    .eq("id", user.id);
+    .eq("id", user.id)
+    .select()
+    .single()
 
-  if (error) {
-    console.error("Update user error:", error);
-    return error;
-  }
-
-  revalidatePath("/dashboard/settings");
+    if (error) {
+      console.error("Update user error:", error);
+      return { data: null, error };
+    }
+  
+    revalidatePath("/dashboard/settings");
+  
+    return { data: updatedPatient, error: null };
 }

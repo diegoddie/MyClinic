@@ -59,13 +59,14 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
   async function onSubmit(data: DoctorFormValues) {
     setIsLoading(true);
 
-    const error = await updateDoctor(
+    const result = await updateDoctor(
       data,
       doctor.id,
       avatar ?? undefined
     ); // Passa l'avatar
 
-    if (error) {
+    if (result.error) {
+      console.error("Error:", result.error);
       setIsLoading(false);
       toast({
         title: "Error",
@@ -75,8 +76,8 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
     } else {
       setIsLoading(false);
       toast({
-        title: "Doctor Created",
-        description: "You have successfully added a new doctor",
+        title: "Doctor Updated",
+        description: "You have successfully updated your profile",
         variant: "success",
       });
       form.reset(data);

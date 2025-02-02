@@ -62,17 +62,14 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
   async function onSubmit(data: PatientFormValues) {
     setIsLoading(true);
 
-    const error = await updatePatient(
-      data,
-      patient,
-      avatar ?? undefined
-    ); // Passa l'avatar
-
-    if (error) {
+    const result = await updatePatient(data, patient, avatar ?? undefined);
+    
+    if (result.error) {
+      console.error("Error:", result.error);
       setIsLoading(false);
       toast({
         title: "Error",
-        description: "An error occurred. Please try again.",
+        description: result.error.message,
         variant: "destructive",
       });
     } else {

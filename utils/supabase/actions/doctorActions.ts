@@ -10,6 +10,12 @@ export async function getDoctors() {
   const supabase = await createClient();
 
   const authenticatedUser = await getAuth();
+
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return new Error("Auth session missing!");
+  }
+  
   const userData = authenticatedUser?.id ? await getUser({ id: authenticatedUser.id }) : null;
 
   if(!userData) {
@@ -41,7 +47,7 @@ export async function updateDoctor(
 
   if (!isDoctor(userData)) {
     console.error("User is not a doctor");
-    return new Error("User is not a doctor");
+    return { data: null, error: new Error("User is not a doctor") }; 
   }
 
   let avatarUrl: string | null = null;
@@ -54,7 +60,7 @@ export async function updateDoctor(
 
     if (uploadError) {
       console.error("Error uploading avatar:", uploadError);
-      return uploadError;
+      return { data: null, error: uploadError };
     }
 
     // Ottenere l'URL pubblico dell'avatar
@@ -65,11 +71,11 @@ export async function updateDoctor(
       avatarUrl = publicUrlData.publicUrl;
     } else {
       console.error("Error retrieving public URL for avatar");
-      return new Error("Unable to retrieve public URL for avatar");
+      return { data: null, error: new Error("Unable to retrieve public URL for avatar") };
     }
   }
 
-  const { error } = await supabase
+  const { data: updatedDoctor, error } = await supabase
     .from("doctors")
     .update({
       first_name: data.firstName,
@@ -78,12 +84,15 @@ export async function updateDoctor(
       specialization: data.specialization,
       profile_picture: avatarUrl || data.profilePicture, // Mantieni il vecchio avatar se non ne è stato caricato uno nuovo
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select()
+    .single()
 
   if (error) {
     console.error("Error updating doctor:", error);
-    return error;
+    return { data: null, error };
   }
 
   revalidatePath("/dashboard/doctors");
+  return { data: updatedDoctor, error: null };
 }
