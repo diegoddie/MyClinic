@@ -9,7 +9,6 @@ export async function getAuth(): Promise<AuthUser | null> {
   const { data, error } = await supabase.auth.getUser();
 
   if (error) {
-    
     return null
   }
 
@@ -53,14 +52,14 @@ export async function getUser({ id }: { id: string }): Promise<User | Doctor | P
   return data;
 }
 
-export async function logout() {
+export async function logout(): Promise<{ error?: string } | null> {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
     console.error("Logout error:", error);
-    return error; // Restituisci l'errore direttamente
+    return {error: "Logout error"};
   }
-  return null; // Se non c'è errore, restituisci null
+  return null; 
 }
 
 export async function fetchUser(){

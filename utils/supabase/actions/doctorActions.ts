@@ -5,49 +5,41 @@ import { revalidatePath } from "next/cache";
 import { getAuth, getUser } from "./authActions";
 import { createClient } from "../server";
 import { DoctorFormValues } from "@/lib/schemas/doctorSchema";
+import { format, getDay, addMinutes, setHours } from "date-fns";
+import { Doctor } from "../types";
 
-export async function getDoctors() {
+export async function getDoctors(): Promise<Doctor[] | { error: string }> {
   const supabase = await createClient();
 
-  const authenticatedUser = await getAuth();
-
-  if (!authenticatedUser) {
-    console.error("Auth session missing!");
-    return new Error("Auth session missing!");
-  }
-  
-  const userData = authenticatedUser?.id ? await getUser({ id: authenticatedUser.id }) : null;
-
-  if(!userData) {
-    console.error("User not found");
-    return new Error("User not found");
-  }
-
-  const { data, error } = await supabase.from("doctors").select("*");
+  const { data, error } = await supabase
+    .from("doctors")
+    .select("*");
 
   if (error) {
     console.error("Error fetching doctors:", error);
-    return error;
+    return { error: "Error fetching doctors" }; // Restituisce un oggetto con l'errore
   }
 
-  return data;
+  return data ?? []; // Restituisce l'array di dottori, o un array vuoto se non ci sono dati
 }
 
 export async function updateDoctor(
   data: DoctorFormValues,
   id: string,
   avatar?: File
-) {
+): Promise<{ data?: Doctor; error?: string }> {
   const supabase = await createClient();
 
   const authenticatedUser = await getAuth();
-  const userData = authenticatedUser?.id
-    ? await getUser({ id: authenticatedUser.id })
-    : null;
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
 
+  const userData = authenticatedUser?.id ? await getUser({ id: authenticatedUser.id }) : null;
   if (!isDoctor(userData)) {
     console.error("User is not a doctor");
-    return { data: null, error: new Error("User is not a doctor") }; 
+    return { error: "User is not a doctor" };
   }
 
   let avatarUrl: string | null = null;
@@ -60,7 +52,7 @@ export async function updateDoctor(
 
     if (uploadError) {
       console.error("Error uploading avatar:", uploadError);
-      return { data: null, error: uploadError };
+      return { error: "Error uploading avatar" };
     }
 
     // Ottenere l'URL pubblico dell'avatar
@@ -71,7 +63,7 @@ export async function updateDoctor(
       avatarUrl = publicUrlData.publicUrl;
     } else {
       console.error("Error retrieving public URL for avatar");
-      return { data: null, error: new Error("Unable to retrieve public URL for avatar") };
+      return { error: "Unable to retrieve public URL for avatar" };
     }
   }
 
@@ -90,9 +82,57 @@ export async function updateDoctor(
 
   if (error) {
     console.error("Error updating doctor:", error);
-    return { data: null, error };
+    return { error: "Error updating doctor" };
   }
 
   revalidatePath("/dashboard/doctors");
-  return { data: updatedDoctor, error: null };
+  return { data: updatedDoctor };
+}
+
+export async function getDoctorAvailability(id: string, selectedDate: Date): Promise<string[] | { error?: string }> {
+  const supabase = await createClient();
+
+  const authenticatedUser = await getAuth();
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
+  const userData = authenticatedUser?.id ? await getUser({ id: authenticatedUser.id }) : null;
+  if (!userData) {
+    console.error("User not found");
+    return { error: "User not found" };
+  }
+
+  // Check if the selected date is a weekend (Saturday or Sunday)
+  const dayOfWeek = getDay(selectedDate);
+  if (dayOfWeek === 0 || dayOfWeek === 6) {
+    return []; // Clinic is closed, no available slot
+  }
+
+  // Generate available time slots from 9:00 AM to 6:00 PM, every 30 minutes
+  const allSlots = Array.from({ length: 18 }, (_, i) => format(addMinutes(setHours(selectedDate, 9), i * 30), "HH:mm"));
+
+  // Format date for database query
+  const formattedDate = format(selectedDate, "yyyy-MM-dd");
+
+  // Fetch already booked appointments for the selected day
+  const { data, error } = await supabase
+    .from("appointments")
+    .select("date")
+    .eq("doctor_id", id)
+    .gte("date", `${formattedDate}T00:00:00Z`)
+    .lt("date", `${formattedDate}T23:59:59Z`);
+
+  if (error) {
+    console.error("Error fetching doctor availability:", error);
+    return { error: "Error fetching doctor availability" };
+  }
+
+  // Extract booked times
+  const bookedTimes = new Set(data.map((appointment) => format(new Date(appointment.date), "HH:mm")));
+
+  // Filter available slots
+  const availableSlots = allSlots.filter((slot) => !bookedTimes.has(slot));
+  return availableSlots
 }

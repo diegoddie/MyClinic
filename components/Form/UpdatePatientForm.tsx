@@ -69,7 +69,7 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
       setIsLoading(false);
       toast({
         title: "Error",
-        description: result.error.message,
+        description: "An error occurred. Please try again.",
         variant: "destructive",
       });
     } else {

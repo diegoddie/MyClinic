@@ -12,11 +12,16 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
   const supabase = await createClient();
 
   const authenticatedUser = await getAuth();
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
   const userData = authenticatedUser?.id ? await getUser({ id: authenticatedUser.id }) : null;
     
   if (!isPatient(userData)) {
     console.error("User is not a patient");
-    return { data: null, error: new Error("User is not a patient") }; 
+    return { error: "User is not a patient" };
   }
 
   let avatarUrl: string | null = null;
@@ -30,7 +35,7 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
 
     if (uploadError) {
       console.error("Error uploading avatar:", uploadError);
-      return { data: null, error: uploadError };
+      return { error: "Error uploading avatar" };
     }
 
     // Ottenere l'URL pubblico dell'avatar
@@ -39,7 +44,7 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
       avatarUrl = publicUrlData.publicUrl;
     } else {
       console.error("Error retrieving public URL for avatar");
-      return { data: null, error: new Error("Unable to retrieve public URL for avatar") };
+      return { error: "Unable to retrieve public URL for avatar" };
     }
   }
 
@@ -60,10 +65,10 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
 
     if (error) {
       console.error("Update user error:", error);
-      return { data: null, error };
+      return { error: "Error updating doctor" };
     }
   
     revalidatePath("/dashboard/settings");
   
-    return { data: updatedPatient, error: null };
+    return { data: updatedPatient };
 }

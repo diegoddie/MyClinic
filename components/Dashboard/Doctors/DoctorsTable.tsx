@@ -31,13 +31,14 @@ import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteDoctorDialog from "./DeleteDoctorDialog";
 import { isAdmin } from "@/utils/getRole";
+import { BookAppointment } from "./BookAppointment";
 
 export default function DoctorsTable({
   doctors,
   user
 }: {
   doctors: Doctor[];
-  user: Doctor | Patient | User
+  user: Patient | User
 }) {
   const [currentPage, setCurrentPage] = useState(1);
   const userIsAdmin = isAdmin(user) === true;
@@ -106,9 +107,9 @@ export default function DoctorsTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="text-muted-foreground">
-                    PLACEHOLDER
-                  </div>
+                  
+                  <BookAppointment doctor={doctor} user={user} />
+                  
                 </TableCell>
                 {userIsAdmin && (
                   <TableCell>

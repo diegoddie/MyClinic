@@ -1,7 +1,7 @@
 import DoctorsTable from "@/components/Dashboard/Doctors/DoctorsTable";
 import { getDoctors } from "@/utils/supabase/actions/doctorActions";
 import { Button } from "@/components/ui/button";
-import { Menu, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -10,25 +10,30 @@ import {
 } from "@/components/ui/sheet";
 import { fetchUser } from "@/utils/supabase/actions/authActions";
 import { redirect } from "next/navigation";
-import { isAdmin } from "@/utils/getRole";
+import { isAdmin, isDoctor } from "@/utils/getRole";
 import CreateDoctorForm from "@/components/Form/CreateDoctorForm";
 
 export default async function Doctors() {
   const user = await fetchUser();
-  if (!user) {
+  if (!user || isDoctor(user)) {
     redirect("/login");
   }
   const doctorsResponse = await getDoctors();
+
+  if ('error' in doctorsResponse) {
+    console.error(doctorsResponse.error);
+    return (
+      <div className="py-2 flex flex-col">
+        <p>Error fetching doctors: {doctorsResponse.error}</p>
+      </div>
+    );
+  }
+
   const doctors = Array.isArray(doctorsResponse) ? doctorsResponse : [];
 
   return (
     <div className="py-2 flex flex-col">
       <div className="flex items-center justify-center md:justify-end mb-6 gap-4">
-        <Button className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
-          <Menu className="h-4 w-4" />
-          Filters
-        </Button>
-
         {isAdmin(user) && (
           <Sheet>
             <SheetTrigger asChild>

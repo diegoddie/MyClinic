@@ -54,7 +54,7 @@ export default function CreateDoctorForm() {
       phoneNumber: data.phoneNumber,
       profilePicture: avatar || undefined,
     });
-    if (magicLinkError instanceof Error) {
+    if (magicLinkError && magicLinkError.error) {
       setIsLoading(false);
       toast({
         title: "Error",

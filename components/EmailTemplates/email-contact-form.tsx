@@ -7,7 +7,7 @@ interface EmailTemplateProps {
   message: string;
 }
 
-export const EmailTemplate: React.FC<Readonly<EmailTemplateProps>> = ({
+export const EmailContactForm: React.FC<Readonly<EmailTemplateProps>> = ({
   firstName,
   lastName,
   email,
