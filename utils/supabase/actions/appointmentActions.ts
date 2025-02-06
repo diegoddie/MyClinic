@@ -18,6 +18,9 @@ export interface AppointmentWithRelations extends Appointment {
     first_name: string;
     last_name: string;
     profile_picture: string;
+    tax_id?: string;
+    email?: string;
+    phone_number?: string;
   };
   doctor: {
     id: string;
@@ -107,6 +110,274 @@ export async function getUserAppointments(
   }
 
   return { data: data as AppointmentWithRelations[], total: count ?? 0 };
+}
+
+export async function getUserLastFiveAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+  count?: number | null;
+}> {
+  const supabase = await createClient();
+  const authenticatedUser = await getAuth();
+
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!userData) {
+    console.error("User not found");
+    return { error: "User not found" };
+  }
+
+  const userRole = isPatient(userData)
+    ? "patient_id"
+    : isDoctor(userData)
+    ? "doctor_id"
+    : null;
+  if (!userRole) {
+    console.error("Invalid user role");
+    return { error: "Invalid user role" };
+  }
+
+  const now = new Date().toISOString();
+
+  const { data, count, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`,
+      { count: "exact" }
+    )
+    .eq(userRole, userData.id)
+    .lt("date", now)
+    .in("status", ["confirmed", "completed"])
+    .order("date", { ascending: false }) // Ordina per data decrescente
+    .limit(5); // Prende gli ultimi 5 appuntamenti
+
+  if (error) {
+    console.error("Error fetching today's appointments:", error);
+    return { error: "Error fetching today's appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[], count: count };
+}
+
+export async function getUserNextFiveAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+  count?: number | null;
+}> {
+  const supabase = await createClient();
+  const authenticatedUser = await getAuth();
+
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!userData) {
+    console.error("User not found");
+    return { error: "User not found" };
+  }
+
+  const userRole = isPatient(userData)
+    ? "patient_id"
+    : isDoctor(userData)
+    ? "doctor_id"
+    : null;
+  if (!userRole) {
+    console.error("Invalid user role");
+    return { error: "Invalid user role" };
+  }
+
+  const now = new Date().toISOString();
+
+  const { data, count, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`,
+      { count: "exact" }
+    )
+    .eq(userRole, userData.id)
+    .gte("date", now)
+    .eq("status", "confirmed") // Solo appuntamenti confermati
+    .order("date", { ascending: true }) // Ordina per data crescente
+    .limit(5); // Prende i prossimi 5 appuntamenti
+
+  if (error) {
+    console.error("Error fetching today's appointments:", error);
+    return { error: "Error fetching today's appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[], count: count };
+}
+
+export async function getUserTodayAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+  count?: number | null;
+}> {
+  const supabase = await createClient();
+  const authenticatedUser = await getAuth();
+
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!userData) {
+    console.error("User not found");
+    return { error: "User not found" };
+  }
+
+  const userRole = isPatient(userData)
+    ? "patient_id"
+    : isDoctor(userData)
+    ? "doctor_id"
+    : null;
+  if (!userRole) {
+    console.error("Invalid user role");
+    return { error: "Invalid user role" };
+  }
+
+  const today = new Date().toISOString().split("T")[0]; // Data attuale senza orario
+
+  const { data, count, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`,
+      { count: "exact" }
+    )
+    .eq(userRole, userData.id)
+    .gte("date", today)
+    .lte("date", today)
+    .order("date", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching today's appointments:", error);
+    return { error: "Error fetching today's appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[], count: count };
+}
+
+export async function getUserPendingAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+  count?: number;
+}> {
+  const supabase = await createClient();
+  const authenticatedUser = await getAuth();
+
+  if (!authenticatedUser) {
+    console.error("Auth session missing!");
+    return { error: "Auth session missing!" };
+  }
+
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!userData) {
+    console.error("User not found");
+    return { error: "User not found" };
+  }
+
+  const userRole = isPatient(userData)
+    ? "patient_id"
+    : isDoctor(userData)
+    ? "doctor_id"
+    : null;
+  if (!userRole) {
+    console.error("Invalid user role");
+    return { error: "Invalid user role" };
+  }
+
+  const { data, error, count } = await supabase
+  .from("appointments")
+  .select(
+    `*,
+    patient:patient_id (
+        id,
+        first_name,
+        tax_id,
+        email,
+        last_name,
+        profile_picture,
+        phone_number
+      ),
+    doctor:doctor_id (
+      id,
+      first_name,
+      last_name,
+      profile_picture,
+      specialization
+      )`,
+      { count: "exact" }
+    )
+    .eq(userRole, userData.id)  // Filtra gli appuntamenti in base all'utente
+    .eq("status", "pending");  // Solo gli appuntamenti in sospeso
+
+    if (error) {
+      console.error("Error fetching pending appointments:", error.message);
+      return { error: "Error fetching pending appointments" };
+    }
+
+    return {
+      data: data as AppointmentWithRelations[],
+      count: count ?? 0, 
+    };
 }
 
 export async function bookAppointment(

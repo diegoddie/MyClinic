@@ -6,6 +6,7 @@ import { getAuth, getUser } from "./authActions";
 import { createAdminClient } from "../adminServer";
 import getURL from "@/utils/getURL";
 import { AppointmentWithRelations } from "./appointmentActions";
+import { sendAppointmentConfirmed, sendAppointmentUnconfirmed } from "@/lib/resend/appointmentEmail";
 
 export async function sendDoctorMagicLink(
   email: string,
@@ -180,6 +181,56 @@ export async function getAppointments(
   return { data: data as AppointmentWithRelations[], total: count };
 }
 
+export async function getTodayAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+  count?: number | null;
+}> {
+  const supabase = await createAdminClient();
+
+  const authenticatedUser = await getAuth();
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!isAdmin(userData)) {
+    console.error("User is not an admin");
+    return { error: "User is not an admin" };
+  }
+
+  const today = new Date().toISOString().split("T")[0]; // Data attuale senza orario
+
+  const { data, count, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`,
+      { count: "exact" }
+    )
+    .gte("date", today)
+    .lte("date", today)
+    .order("date", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching today's appointments:", error);
+    return { error: "Error fetching today's appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[], count: count };
+}
+
 export async function getPendingAppointments(): Promise<{
   data?: AppointmentWithRelations[];
   error?: string;
@@ -204,8 +255,11 @@ export async function getPendingAppointments(): Promise<{
       patient:patient_id (
         id,
         first_name,
+        tax_id,
+        email,
         last_name,
-        profile_picture
+        profile_picture,
+        phone_number
       ),
       doctor:doctor_id (
         id,
@@ -229,8 +283,107 @@ export async function getPendingAppointments(): Promise<{
   };
 }
 
-export async function deleteAppointment(
-  id: string
+export async function getNextFiveAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+}> {
+  const supabase = await createAdminClient();
+
+  const authenticatedUser = await getAuth();
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!isAdmin(userData)) {
+    console.error("User is not an admin");
+    return { error: "User is not an admin" };
+  }
+
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`
+    )
+    .gte("date", now) // Appuntamenti futuri
+    .eq("status", "confirmed") // Solo appuntamenti confermati
+    .order("date", { ascending: true }) // Ordina per data crescente
+    .limit(5); // Prende i prossimi 5 appuntamenti
+
+  if (error) {
+    console.error("Error fetching next five confirmed appointments:", error);
+    return { error: "Error fetching next five confirmed appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[] };
+}
+
+export async function getLastFiveAppointments(): Promise<{
+  data?: AppointmentWithRelations[];
+  error?: string;
+}> {
+  const supabase = await createAdminClient();
+
+  const authenticatedUser = await getAuth();
+  const userData = authenticatedUser?.id
+    ? await getUser({ id: authenticatedUser.id })
+    : null;
+
+  if (!isAdmin(userData)) {
+    console.error("User is not an admin");
+    return { error: "User is not an admin" };
+  }
+
+  const now = new Date().toISOString();
+
+  const { data, error } = await supabase
+    .from("appointments")
+    .select(
+      `*,
+      patient:patient_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture
+      ),
+      doctor:doctor_id (
+        id,
+        first_name,
+        last_name,
+        profile_picture,
+        specialization
+      )`
+    )
+    .lt("date", now) // Appuntamenti passati
+    .in("status", ["confirmed", "completed"]) // Solo confermati o completati
+    .order("date", { ascending: false }) // Ordina per data decrescente
+    .limit(5); // Prende gli ultimi 5 appuntamenti
+
+  if (error) {
+    console.error("Error fetching last five appointments:", error);
+    return { error: "Error fetching last five appointments" };
+  }
+
+  return { data: data as AppointmentWithRelations[] };
+}
+
+
+export async function declineAppointment(
+  appointment: AppointmentWithRelations,
 ): Promise<{ error?: string } | void> {
   const supabase = await createAdminClient();
 
@@ -244,19 +397,32 @@ export async function deleteAppointment(
     return { error: "User is not an admin" };
   }
 
-  const { error } = await supabase.from("appointments").delete().eq("id", id);
+  const { error } = await supabase.from("appointments").delete().eq("id", appointment.id);
 
   if (error) {
     console.error("Error deleting appointment:", error);
     return { error: "Error deleting appointment." };
   }
 
+  const emailData = {
+    firstName: appointment.patient.first_name || "",
+    lastName: appointment.patient.last_name || "",
+    email: appointment.patient.email || "",
+    taxId: appointment.patient.tax_id || "",
+    phoneNumber: appointment.patient.phone_number || "",
+    date: appointment.date,
+    doctorFirstName: appointment.doctor.first_name || "",
+    doctorLastName: appointment.doctor.last_name || "",
+  };
+
+    await sendAppointmentUnconfirmed(emailData.email, emailData);
+
   revalidatePath("/appointments");
 }
 
 
 export async function approveAppointment(
-  id: string
+  appointment: AppointmentWithRelations,
 ): Promise<{ error?: string } | void> {
   const supabase = await createAdminClient();
 
@@ -273,12 +439,25 @@ export async function approveAppointment(
   const { error } = await supabase
     .from("appointments")
     .update({ status: "confirmed" })
-    .eq("id", id);
+    .eq("id", appointment.id);
 
   if (error) {
     console.error("Error approving appointment:", error);
     return { error: "Error approving appointment." };
   }
+
+  const emailData = {
+    firstName: appointment.patient.first_name || "",
+    lastName: appointment.patient.last_name || "",
+    email: appointment.patient.email || "",
+    taxId: appointment.patient.tax_id || "",
+    phoneNumber: appointment.patient.phone_number || "",
+    date: appointment.date,
+    doctorFirstName: appointment.doctor.first_name || "",
+    doctorLastName: appointment.doctor.last_name || "",
+  };
+
+    await sendAppointmentConfirmed(emailData.email, emailData);
 
   revalidatePath("/appointments");
 }

@@ -8,19 +8,19 @@ import { DoctorFormValues } from "@/lib/schemas/doctorSchema";
 import { format, getDay, addMinutes, setHours } from "date-fns";
 import { Doctor } from "../types";
 
-export async function getDoctors(): Promise<Doctor[] | { error: string }> {
+export async function getDoctors(): Promise<{ data: Doctor[]; count?: number | null; error?: string }> {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
+  const { data, count, error } = await supabase
     .from("doctors")
-    .select("*");
+    .select("*", { count: "exact" }); // Conta il numero totale di dottori
 
   if (error) {
     console.error("Error fetching doctors:", error);
-    return { error: "Error fetching doctors" }; // Restituisce un oggetto con l'errore
+    return { data: [], count: null, error: "Error fetching doctors" }; 
   }
 
-  return data ?? []; // Restituisce l'array di dottori, o un array vuoto se non ci sono dati
+  return { data: data ?? [], count }; // Restituisce i dati e il conteggio
 }
 
 export async function updateDoctor(
