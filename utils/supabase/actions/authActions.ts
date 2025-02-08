@@ -59,6 +59,7 @@ export async function logout(): Promise<{ error?: string } | null> {
     console.error("Logout error:", error);
     return {error: "Logout error"};
   }
+
   return null; 
 }
 

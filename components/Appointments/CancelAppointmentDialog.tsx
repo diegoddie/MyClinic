@@ -11,28 +11,41 @@ import {
   } from "@/components/ui/alert-dialog"
   import { useToast } from "@/hooks/use-toast";
 import { deleteAppointment } from "@/utils/supabase/actions/appointmentActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
   import { Trash2 } from "lucide-react";
   
   export default function CancelAppointmentDialog({ doctorFirstName, doctorLastName, appointmentId, appointmentDate, appointmentStatus }: { doctorFirstName: string, doctorLastName: string, appointmentId: string, appointmentDate: string, appointmentStatus: string }) {
-      const { toast } = useToast();
+    const queryClient = useQueryClient();  
+    const { toast } = useToast();
+
+    const mutation = useMutation({
+      mutationFn: async () => {
+        const result = await deleteAppointment(doctorFirstName, doctorLastName, appointmentId, appointmentDate, appointmentStatus);
+        if (result && result.error) {
+          throw new Error(result.error);
+        }
+        return result
+      },
+      onSuccess: () => {
+        toast({
+          title: "Doctor Deleted",
+          description: "You have successfully canceled your visit.",
+          variant: "success",
+       });
+        queryClient.refetchQueries({ queryKey: ["appointments"] });
+      },
+      onError: () => {
+        toast({
+          title: "Error",
+          description: "An error occurred. Please try again.",
+          variant: "destructive",
+        });
+      },
+    });
   
-      const onDelete = async () => {
-          // Delete doctor
-          const error = await deleteAppointment(doctorFirstName, doctorLastName, appointmentId, appointmentDate, appointmentStatus);
-          if (error) {
-              toast({
-                  title: "Error",
-                  description: "An error occurred. Please try again.",
-                  variant: "destructive",
-              });
-          } else {
-              toast({
-                  title: "Doctor Deleted",
-                  description: "You have successfully canceled your visit.",
-                  variant: "success",
-              });
-          }
-      }
+    async function onDelete() {
+      mutation.mutate();
+    }
   
     return (
       <AlertDialog>

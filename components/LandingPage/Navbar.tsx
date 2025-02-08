@@ -27,10 +27,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
-import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
+import GetAvatarFallback from "../Settings/GetAvatarFallback";
 import { useToast } from "@/hooks/use-toast";
-import { logout } from "@/utils/supabase/actions/authActions";
-import { Doctor, Patient, User } from "@/utils/supabase/types";
+import { fetchUser, logout } from "@/utils/supabase/actions/authActions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -40,30 +40,40 @@ const navItems = [
   { name: "Contacts", href: "#contacts" },
 ];
 
-export default function Navbar({ user } : { user: Patient | Doctor | User | null }) {
+export default function Navbar() {
+  const queryClient = useQueryClient();
+  const { data: user } = useQuery({ queryKey: ['user'], queryFn: fetchUser });
+
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const { toast } = useToast();
 
-  const handleLogout = async () => {
-    setIsLoggingOut(true);
-    const error = await logout();
-    if (error) {
-      setIsLoggingOut(false);
-      toast({
-        title: "Error",
-        description: "Failed to logout. Please try again.",
-        variant: "destructive",
-      });
-    } else {
-      setIsLoggingOut(false);
+  const mutation = useMutation({
+    mutationFn: async () => {  
+      const result = await logout();  
+      if (result?.error) {  
+        throw new Error(result.error);  
+      }
+    },
+    onSuccess: () => {
       toast({
         title: "Logged out",
         description: "You have been successfully logged out",
         variant: "success",
       });
+      queryClient.invalidateQueries({ queryKey: ['user'] });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "An error occurred while logging out",
+        variant: "destructive",
+      });
     }
+  })
+
+  const handleLogout = () => {
+    mutation.mutate();
   }
 
   return (
@@ -123,11 +133,11 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
                   <DropdownMenuItem>
                     <Button
                       onClick={handleLogout}
-                      disabled={isLoggingOut}
+                      disabled={mutation.isPending}
                       type="button"
                       className="bg-secondary text-white text-lg w-full"
                     >
-                      {isLoggingOut ? (
+                      {mutation.isPending ? (
                         <>
                           <Spinner className="mr-2" />
                           <span>Logging out...</span>
@@ -203,11 +213,11 @@ export default function Navbar({ user } : { user: Patient | Doctor | User | null
                         <DropdownMenuItem>
                           <Button
                             onClick={handleLogout}
-                            disabled={isLoggingOut}
+                            disabled={mutation.isPending}
                             type="button"
                             className="bg-secondary text-white text-lg w-full justify-center flex mx-auto"
                           >
-                            {isLoggingOut ? (
+                            {mutation.isPending ? (
                               <>
                                 <Spinner className="mr-2" />
                                 <span>Logging out...</span>

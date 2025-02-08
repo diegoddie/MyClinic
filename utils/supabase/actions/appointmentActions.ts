@@ -409,9 +409,9 @@ export async function bookAppointment(
   }
 
   if (
-    !userData.first_name &&
-    !userData.last_name &&
-    !userData.tax_id &&
+    !userData.first_name ||
+    !userData.last_name ||
+    !userData.tax_id ||
     !userData.phone_number
   ) {
     console.log(

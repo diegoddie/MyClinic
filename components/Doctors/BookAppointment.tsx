@@ -1,35 +1,34 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+
 import { Button } from "@/components/ui/button";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { getDoctorAvailability } from "@/utils/supabase/actions/doctorActions";
-import { Doctor, Patient, User } from "@/utils/supabase/types";
+import { Doctor } from "@/utils/supabase/types";
 import { Spinner } from "@/components/ui/spinner";
 import { useToast } from "@/hooks/use-toast";
 import { bookAppointment } from "@/utils/supabase/actions/appointmentActions";
 import { redirect } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchUser } from "@/utils/supabase/actions/authActions";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export function BookAppointment({
   doctor,
-  user,
 }: {
   doctor: Doctor;
-  user: Patient | User;
 }) {
+  const queryClient = useQueryClient();
+  const {
+    data: user
+  } = useQuery({ queryKey: ["user"], queryFn: fetchUser });
+
+  if(!user){
+    redirect('/login');
+  }
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(
     new Date()
   );
@@ -38,6 +37,7 @@ export function BookAppointment({
   );
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
 
   const handleDateSelect = async (date: Date | undefined) => {
@@ -64,65 +64,66 @@ export function BookAppointment({
     setSelectedTime(time);
   };
 
-  const handleBooking = async () => {
-    if (!selectedDate || !selectedTime) return;
-    setIsLoading(true); // Inizio del caricamento
+  const mutation = useMutation({
+    mutationFn: async ({ selectedDate, selectedTime }: { selectedDate: string; selectedTime: string }) => {
+      if (!selectedDate || !selectedTime) throw new Error("Date and time are required");
 
-    const appointmentDate = new Date(selectedDate);
+      const appointmentDate = new Date(selectedDate);
+      const [hours, minutes] = selectedTime.split(":").map(Number);
+      appointmentDate.setHours(hours, minutes, 0, 0);
 
-    const [hours, minutes] = selectedTime.split(":").map(Number);
-    appointmentDate.setHours(hours, minutes, 0, 0);
-
-    const result = await bookAppointment(
-      user.id,
-      doctor,
-      appointmentDate.toISOString()
-    );
-
-    // Se result è un'istanza di Error
-    if (result.error) {
+      const result = await bookAppointment(user.id, doctor, appointmentDate.toISOString());
+      if (result.error) {
+        throw new Error(result.error); 
+      }
+  
+      return result;
+    },
+    onSuccess: () => {
+      toast({
+        title: "Appointment Booked",
+        description: "You have successfully booked an appointment.",
+        variant: "success",
+      });
+      setIsOpen(false);
+      queryClient.refetchQueries({ queryKey: ["appointments"] });
+      setTimeout(() => {
+        redirect("/appointments");
+      }, 500); 
+    },
+    onError: (e) => {
       toast({
         title: "Something went wrong",
-        description: "Something went wrong",
+        description: e.message,
         variant: "destructive",
       });
-      return;
-    }
+    },
+  });
 
-    toast({
-      title: "Appointment Booked",
-      description: "You have successfully booked an appointment.",
-      variant: "success",
-    });
-
-    setIsLoading(false);
-
-    setSelectedDate(undefined);
-    setSelectedTime(undefined);
-
-    redirect("/appointments");
-  };
+  async function handleBooking(selectedDate: string, selectedTime: string) {
+    mutation.mutate({ selectedDate, selectedTime });
+  }
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
         <Button className="bg-secondary dark:text-black text-white dark:font-semibold gap-2">
           <CalendarIcon />
           <span>Availability</span>
         </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent className="dark:bg-[#09090b] text-black dark:text-white">
-        <AlertDialogHeader>
-          <AlertDialogTitle className="font-bold">
+      </DialogTrigger>
+      <DialogContent className="dark:bg-[#09090b] text-black dark:text-white">
+        <DialogHeader>
+          <DialogTitle className="font-bold">
             See availability and book your visit
-          </AlertDialogTitle>
-          <AlertDialogDescription>
+          </DialogTitle>
+          <DialogDescription>
             Select a date and time for your appointment with Dr.{" "}
             {doctor.first_name} {doctor.last_name}. Please note that once you
             book your appointment, it will be marked as &lsquo;pending&rsquo;
             until confirmed. You will receive an email notification once your
             appointment is confirmed.
-          </AlertDialogDescription>
+          </DialogDescription>
 
           <div className="flex flex-row items-center space-x-5 py-12">
             <Calendar
@@ -158,24 +159,27 @@ export function BookAppointment({
               </div>
             )}
           </div>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel className="text-black">Cancel</AlertDialogCancel>
-          <AlertDialogAction
+        </DialogHeader>
+        <DialogFooter>
+          <Button
             className="bg-secondary dark:text-black text-white dark:font-semibold"
-            onClick={handleBooking}
-            disabled={isLoading || !selectedDate || !selectedTime}
+            onClick={() => {
+              if (selectedDate && selectedTime) {
+                handleBooking(selectedDate.toISOString(), selectedTime);
+              }
+            }}
+            disabled={mutation.isPending || !selectedDate || !selectedTime}
           >
-            {isLoading ? (
+            {mutation.isPending ? (
               <div className="flex items-center justify-center">
                 <Spinner className="h-5 w-5 text-primary" />
               </div>
             ) : (
               "Book Appointment"
             )}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

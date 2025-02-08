@@ -19,9 +19,10 @@ import { useToast } from "@/hooks/use-toast";
 import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
 import { Mail, Phone, Stethoscope, User } from "lucide-react";
 import { sendDoctorMagicLink } from "@/utils/supabase/actions/adminActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function CreateDoctorForm() {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [avatar, setAvatar] = useState<File | null>();
   const { toast } = useToast();
 
@@ -44,33 +45,41 @@ export default function CreateDoctorForm() {
     }
   };
 
-  async function onSubmit(data: DoctorFormValues) {
-    setIsLoading(true);
-
-    const magicLinkError = await sendDoctorMagicLink(data.email, {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      specialization: data.specialization,
-      phoneNumber: data.phoneNumber,
-      profilePicture: avatar || undefined,
-    });
-    if (magicLinkError && magicLinkError.error) {
-      setIsLoading(false);
-      toast({
-        title: "Error",
-        description: "Doctor created but magic link could not be sent.",
-        variant: "destructive",
+  const mutation = useMutation({
+    mutationFn: async (data: DoctorFormValues) => {
+      const result = await sendDoctorMagicLink(data.email, {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        specialization: data.specialization,
+        phoneNumber: data.phoneNumber,
+        profilePicture: avatar || undefined,
       });
-    } else {
-      setIsLoading(false);
+      if (result && result.error) {
+        throw new Error(result.error);
+      }
+      return result
+    },
+    onSuccess: () => {
       toast({
         title: "Doctor Created",
         description: "Doctor created and magic link sent successfully.",
         variant: "success",
       });
-      form.reset(data);
+      queryClient.refetchQueries({ queryKey: ["doctors"] });
+      form.reset(); // Reset del modulo
       setAvatar(null); // Reset dell'avatar selezionato
-    }
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Doctor created but magic link could not be sent.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  async function onSubmit(data: DoctorFormValues) {
+      mutation.mutate(data);
   }
 
   return (
@@ -206,7 +215,7 @@ export default function CreateDoctorForm() {
             type="submit"
             className="bg-secondary dark:text-black text-white dark:font-semibold"
           >
-            {isLoading ? (
+            {mutation.isPending ? (
               <>
                 <Spinner className="mr-2" />
                 Loading...

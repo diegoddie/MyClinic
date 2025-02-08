@@ -7,17 +7,13 @@ import Hero from "@/components/LandingPage/Hero";
 import Navbar from "@/components/LandingPage/Navbar";
 import Services from "@/components/LandingPage/Services";
 import RemoveDarkMode from "@/components/utils/RemoveDarkMode";
-import { fetchUser } from "@/utils/supabase/actions/authActions";
 
-export default async function Home() {
-
-  const user = await fetchUser()
+export default function Home() {
 
   return (
     <div className="overflow-x-hidden">
       <RemoveDarkMode>
-        {/* Navbar riceve sempre un user, anche se null */}
-        <Navbar user={user} />
+        <Navbar />
         <Hero />
         <Achievements />
         <About />

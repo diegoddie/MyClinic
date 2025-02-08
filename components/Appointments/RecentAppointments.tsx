@@ -10,22 +10,28 @@ import {
 import Link from "next/link";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { AppointmentWithRelations } from "@/utils/supabase/actions/appointmentActions";
+import { Spinner } from "../ui/spinner";
 
-export function FutureAppointments({
-  nextFiveAppointments,
+export function RecentAppointments({
+  lastFiveAppointments,
+  isLoading
 }: {
-  nextFiveAppointments: AppointmentWithRelations[];
+  lastFiveAppointments: AppointmentWithRelations[],
+  isLoading?: boolean
 }) {
   return (
-    <Card className="w-full">
+    <Card className="w-full h-full">
       <CardHeader>
-        <Link href="/dashboard/visits">
+        <Link href="/appointments">
           <CardTitle className="hover:underline cursor-pointer text-lg font-bold">
-            Next Appointments
+            Latest Appointments
           </CardTitle>
         </Link>
       </CardHeader>
-      <CardContent>
+      {isLoading ? (
+        <Spinner className="h-6 w-6 text-primary items-center justify-center mx-auto flex mb-4" />
+      ) : (
+        <CardContent>
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
             <TableHeader>
@@ -36,14 +42,14 @@ export function FutureAppointments({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {nextFiveAppointments.map((appointment) => (
+              {lastFiveAppointments.map((appointment) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
-                    {appointment.patient.first_name}{" "}
+                    {appointment.patient.first_name}
                     {appointment.patient.last_name}
                   </TableCell>
                   <TableCell>
-                    {appointment.doctor.first_name}{" "}
+                    {appointment.doctor.first_name}
                     {appointment.doctor.last_name}
                   </TableCell>
                   <TableCell>
@@ -62,6 +68,8 @@ export function FutureAppointments({
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </CardContent>
+      )}
+      
     </Card>
   );
 }

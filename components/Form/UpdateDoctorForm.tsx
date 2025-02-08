@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/hooks/use-toast";
 import { DoctorFormValues, doctorSchema } from "@/lib/schemas/doctorSchema";
 import { Doctor } from "@/utils/supabase/types";
-import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
+import GetAvatarFallback from "../Settings/GetAvatarFallback";
 import {
   Card,
   CardContent,
@@ -29,9 +29,11 @@ import {
 } from "@/components/ui/card";
 import { Mail, Phone, Stethoscope, User } from "lucide-react";
 import { updateDoctor } from "@/utils/supabase/actions/doctorActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
+
   const [avatar, setAvatar] = useState<File | null>();
   const { toast } = useToast();
 
@@ -56,34 +58,45 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
     }
   };
 
-  async function onSubmit(data: DoctorFormValues) {
-    setIsLoading(true);
-
-    const result = await updateDoctor(
-      data,
-      doctor.id,
-      avatar ?? undefined
-    ); // Passa l'avatar
-
-    if (result.error) {
-      console.error("Error:", result.error);
-      setIsLoading(false);
-      toast({
-        title: "Error",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
-      });
-    } else {
-      setIsLoading(false);
+  const mutation = useMutation({
+    mutationFn: async (data: DoctorFormValues) => {
+      const result = await updateDoctor(data, doctor.id, avatar ?? undefined)
+      if (result.error) {
+        throw new Error(result.error); 
+      }
+      return result;
+    },
+    onSuccess: (updatedDoctor) => {
       toast({
         title: "Doctor Updated",
         description: "You have successfully updated your profile",
         variant: "success",
       });
-      form.reset(data);
-      setAvatar(null); // Reset dell'avatar selezionato
+
+      // Invalida la cache dell'utente per forzare il refetch
+      queryClient.refetchQueries({ queryKey: ["user"] });
+
+      form.reset({
+        firstName: updatedDoctor.data?.first_name ?? undefined,
+        lastName: updatedDoctor.data?.last_name ?? undefined,
+        profilePicture: updatedDoctor.data?.profile_picture,
+        specialization: updatedDoctor.data?.specialization ?? undefined,
+        phoneNumber: updatedDoctor.data?.phone_number ?? undefined,
+      });
+      setAvatar(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  async function onSubmit(data: DoctorFormValues) {
+      mutation.mutate(data);
     }
-  }
 
   return (
     <Card className="h-full">
@@ -234,7 +247,7 @@ export default function UpdateDoctorForm({ doctor }: { doctor: Doctor }) {
               disabled={!form.formState.isDirty}
               className="bg-secondary dark:text-black text-white dark:font-semibold"
             >
-              {isLoading ? (
+              {mutation.isPending ? (
                 <>
                   <Spinner className="mr-2" />
                   Loading...

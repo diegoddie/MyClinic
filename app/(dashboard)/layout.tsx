@@ -5,15 +5,8 @@ import {
 } from "@/components/ui/sidebar";
 import { ThemeProvider } from "@/components/utils/theme-provider";
 import DashboardNavbar from "@/components/Dashboard/DashboardNavbar";
-import { fetchUser } from "@/utils/supabase/actions/authActions";
-import { redirect } from "next/navigation";
 
-export default async function Layout({ children }: { children: React.ReactNode }) {
-  const user = await fetchUser();
-  if (!user) {
-    redirect('/login');
-  }
-
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <ThemeProvider
       attribute="class"
@@ -22,9 +15,9 @@ export default async function Layout({ children }: { children: React.ReactNode }
       disableTransitionOnChange
     >
       <SidebarProvider className="">
-        <DashboardSidebar user={user} />
+        <DashboardSidebar />
         <SidebarInset className="overflow-x-hidden w-full flex-1">
-          <DashboardNavbar user={user} />
+          <DashboardNavbar />
           <main className="flex-1 p-4 dark:bg-[#09090b] dark:text-white bg-white text-black">
             {children}
           </main>

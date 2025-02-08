@@ -26,22 +26,29 @@ import {
 } from "@/components/ui/pagination";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Doctor, Patient, User } from "@/utils/supabase/types";
+import { Doctor } from "@/utils/supabase/types";
 import { MoreVertical } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DeleteDoctorDialog from "./DeleteDoctorDialog";
 import { isAdmin } from "@/utils/getRole";
 import { BookAppointment } from "./BookAppointment";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUser } from "@/utils/supabase/actions/authActions";
+import { redirect } from "next/navigation";
 
 export default function DoctorsTable({
   doctors,
-  user
 }: {
   doctors: Doctor[];
-  user: Patient | User
 }) {
+  const {data:user, isLoading} = useQuery({ queryKey: ["user"], queryFn: fetchUser })
+
+  if(!user && !isLoading){
+    redirect('/login');
+  }
+
   const [currentPage, setCurrentPage] = useState(1);
-  const userIsAdmin = isAdmin(user) === true;
+  const userIsAdmin = user && isAdmin(user);
 
   const itemsPerPage = 5;
   const totalPages = Math.ceil(doctors.length / itemsPerPage);
@@ -108,7 +115,7 @@ export default function DoctorsTable({
                 </TableCell>
                 <TableCell>
                   
-                  <BookAppointment doctor={doctor} user={user} />
+                  <BookAppointment doctor={doctor} />
                   
                 </TableCell>
                 {userIsAdmin && (

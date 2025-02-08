@@ -29,7 +29,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Separator } from "../ui/separator";
 import { Spinner } from "../ui/spinner";
-import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
+import GetAvatarFallback from "../Settings/GetAvatarFallback";
 import { useToast } from "@/hooks/use-toast";
 import { logout } from "@/utils/supabase/actions/authActions";
 import { Doctor, Patient, User } from "@/utils/supabase/types";

@@ -1,25 +1,61 @@
-import AppointmentsTable from "@/components/Dashboard/Appointments/AppointmentsTable";
+'use client';
+
+import AppointmentsTable from "@/components/Appointments/AppointmentsTable";
+import { Spinner } from "@/components/ui/spinner";
 import { isAdmin, isDoctor, isPatient } from "@/utils/getRole";
 import { getAppointments } from "@/utils/supabase/actions/adminActions";
 import { getUserAppointments } from "@/utils/supabase/actions/appointmentActions";
 import { fetchUser } from "@/utils/supabase/actions/authActions";
+import { useQuery } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 
-export default async function AppointmentsPage() {
-  const user = await fetchUser();
-  if (!user) {
-    redirect("/login");
+export default function AppointmentsPage() {
+  // Fetch user data
+  const {
+    data: user,
+    isLoading: userIsLoading,
+    isError: userIsError,
+  } = useQuery({ 
+    queryKey: ["user"], 
+    queryFn: fetchUser 
+  });
+
+  // Fetch appointments based on user role
+  const {
+    data: appointments,
+    isLoading: appointmentsIsLoading,
+    isError: appointmentsIsError,
+  } = useQuery({
+    queryKey: ["appointments", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+
+      if (isAdmin(user)) {
+        return await getAppointments();
+      } else if (isPatient(user) || isDoctor(user)) {
+        return await getUserAppointments(user.id);
+      }
+
+      return null;
+    },
+    enabled: !!user
+  });
+
+  // Loading state
+  if (userIsLoading || appointmentsIsLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
   }
 
-  let appointments;
-
-  if (isAdmin(user)) {
-    appointments = await getAppointments();
-  } else if (isPatient(user) || isDoctor(user)) {
-    appointments = await getUserAppointments(user.id);
+  // Error handling
+  if (userIsError || !user) {
+    redirect('/');
   }
 
-  if (!appointments || appointments.error || !appointments.data) {
+  if (appointmentsIsError || !appointments || appointments.error) {
     return (
       <div className="py-2">
         <p>Error fetching appointments: {appointments?.error}</p>
@@ -29,7 +65,7 @@ export default async function AppointmentsPage() {
 
   return (
     <div className="py-2 flex flex-col">
-      {appointments.data && appointments.data.length> 0 ? (
+      {appointments.data && appointments.data.length > 0 ? (
         <AppointmentsTable 
           appointments={appointments.data}
         />

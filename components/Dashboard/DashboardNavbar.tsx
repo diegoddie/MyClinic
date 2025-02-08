@@ -3,13 +3,20 @@
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
 import { ThemeToggle } from "../utils/ThemeToggle";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { isAdmin } from "@/utils/getRole";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import GetAvatarFallback from "./Settings/GetAvatarFallback";
-import { Doctor, Patient, User } from "@/utils/supabase/types";
+import GetAvatarFallback from "../Settings/GetAvatarFallback";
+import { useQuery } from "@tanstack/react-query";
+import { fetchUser } from "@/utils/supabase/actions/authActions";
 
-function DashboardNavbar({ user } : { user: Patient | Doctor | User }) {
+function DashboardNavbar() {
+  const {data:user, isLoading} = useQuery({ queryKey: ["user"], queryFn: fetchUser })
+
+  if(!user && !isLoading){
+    redirect('/');
+  }
+
   const pathname = usePathname();
   const sectionName = pathname?.split("/").pop();
 
@@ -27,7 +34,7 @@ function DashboardNavbar({ user } : { user: Patient | Doctor | User }) {
       </div>
       <div className="flex items-center gap-4">
         <ThemeToggle />
-          {!isAdmin(user) ? (
+          {user && !isAdmin(user) ? (
             <Avatar className="hover:shadow-md h-12 w-12">
               <AvatarImage
                 src={user.profile_picture || undefined}
@@ -37,7 +44,7 @@ function DashboardNavbar({ user } : { user: Patient | Doctor | User }) {
             </Avatar>
           ) : (
             <div className="hover:shadow-md h-12 w-12">
-              <GetAvatarFallback email={user.email} />
+              {user && <GetAvatarFallback email={user.email} />}
             </div>
           )}
       </div>

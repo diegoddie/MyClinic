@@ -85,8 +85,8 @@ export async function updateDoctor(
     return { error: "Error updating doctor" };
   }
 
-  revalidatePath("/dashboard/doctors");
-  return { data: updatedDoctor };
+  revalidatePath("/settings");
+  return { data: updatedDoctor as Doctor };
 }
 
 export async function getDoctorAvailability(id: string, selectedDate: Date): Promise<string[] | { error?: string }> {

@@ -270,7 +270,8 @@ export async function getPendingAppointments(): Promise<{
       )`,
       {count: "exact"}
     )
-    .eq("status", "pending");
+    .eq("status", "pending")
+    .order("date", { ascending: true });
 
   if (error) {
     console.error("Error fetching appointments:", error);
@@ -381,7 +382,6 @@ export async function getLastFiveAppointments(): Promise<{
   return { data: data as AppointmentWithRelations[] };
 }
 
-
 export async function declineAppointment(
   appointment: AppointmentWithRelations,
 ): Promise<{ error?: string } | void> {
@@ -419,7 +419,6 @@ export async function declineAppointment(
 
   revalidatePath("/appointments");
 }
-
 
 export async function approveAppointment(
   appointment: AppointmentWithRelations,

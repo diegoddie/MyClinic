@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/utils/tanstack/queryClient";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -19,8 +21,13 @@ export default function RootLayout({
   return (
     <html lang="en" className="!scroll-smooth" suppressHydrationWarning>
       <body className={`${dmSans.className} antialiased`}>
-        <div className="flex flex-col md:min-h-screen">{children}</div>
-        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <div className="flex flex-col md:min-h-screen">
+            {children}
+          </div>
+          <Toaster />
+        </QueryClientProvider>
+        
       </body>
     </html>
   );

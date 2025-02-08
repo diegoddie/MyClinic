@@ -8,7 +8,7 @@ import { Patient } from "@/utils/supabase/types";
 import { revalidatePath } from "next/cache";
 import { getAuth, getUser } from "./authActions";
 
-export async function updatePatient(data: PatientFormValues, user: Patient, avatar?: File) {
+export async function updatePatient(data: PatientFormValues, user: Patient, avatar?: File): Promise<{ data?: Patient; error?: string }> {
   const supabase = await createClient();
 
   const authenticatedUser = await getAuth();
@@ -68,7 +68,7 @@ export async function updatePatient(data: PatientFormValues, user: Patient, avat
       return { error: "Error updating doctor" };
     }
   
-    revalidatePath("/dashboard/settings");
+    revalidatePath("/settings");
   
-    return { data: updatedPatient };
+    return { data: updatedPatient as Patient };
 }

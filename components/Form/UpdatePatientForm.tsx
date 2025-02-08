@@ -24,15 +24,17 @@ import {
 import { Patient } from "@/utils/supabase/types";
 import { Spinner } from "../ui/spinner";
 import { useToast } from "@/hooks/use-toast";
-import { DateOfBirthCalendar } from "../Dashboard/Settings/DateOfBirthCalendar";
-import GetAvatarFallback from "../Dashboard/Settings/GetAvatarFallback";
+import { DateOfBirthCalendar } from "../Settings/DateOfBirthCalendar";
+import GetAvatarFallback from "../Settings/GetAvatarFallback";
 import Image from "next/image";
 import { PatientFormValues, patientSchema } from "@/lib/schemas/patientSchema";
 import { IdCard, Mail, Phone, User } from "lucide-react";
 import { updatePatient } from "@/utils/supabase/actions/patientActions";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function UpdatePatientForm({ patient }: { patient: Patient }) {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
+
   const [avatar, setAvatar] = useState<File | null>();
   const { toast } = useToast();
 
@@ -59,29 +61,47 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
     }
   };
 
-  async function onSubmit(data: PatientFormValues) {
-    setIsLoading(true);
-
-    const result = await updatePatient(data, patient, avatar ?? undefined);
-    
-    if (result.error) {
-      console.error("Error:", result.error);
-      setIsLoading(false);
-      toast({
-        title: "Error",
-        description: "An error occurred. Please try again.",
-        variant: "destructive",
-      });
-    } else {
-      setIsLoading(false);
+  const mutation = useMutation({
+    mutationFn: async (data: PatientFormValues) => {
+      const result = await updatePatient(data, patient, avatar ?? undefined)
+      if (result.error) {
+        throw new Error(result.error); 
+      }
+      return result;
+    },
+    onSuccess: (updatedPatient) => {
       toast({
         title: "User updated",
         description: "You have successfully updated your profile",
         variant: "success",
       });
-      form.reset(data);
-      setAvatar(null); // Reset dell'avatar selezionato
-    }
+
+      // Invalida la cache dell'utente per forzare il refetch
+      queryClient.refetchQueries({ queryKey: ["user"] });
+
+      form.reset({
+        firstName: updatedPatient.data?.first_name ?? undefined,
+        lastName: updatedPatient.data?.last_name ?? undefined,
+        taxId: updatedPatient.data?.tax_id ?? undefined,
+        birthDate: updatedPatient.data?.birth_date
+          ? new Date(updatedPatient.data.birth_date)
+          : undefined,
+        profilePicture: updatedPatient.data?.profile_picture,
+        phoneNumber: updatedPatient.data?.phone_number ?? undefined,
+      });
+      setAvatar(null);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+  
+  async function onSubmit(data: PatientFormValues) {
+    mutation.mutate(data);
   }
 
   return (
@@ -158,7 +178,6 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
                     className="bg-slate-200 dark:bg-slate-600 cursor-not-allowed pl-8"
                   />
                 </div>
-                
               </FormControl>
             </FormItem>
 
@@ -246,7 +265,7 @@ export function UpdatePatientForm({ patient }: { patient: Patient }) {
               disabled={!form.formState.isDirty}
               className="bg-secondary dark:text-black text-white dark:font-semibold"
             >
-              {isLoading ? (
+              {mutation.isPending ? (
                 <>
                   <Spinner className="mr-2" />
                   Loading...

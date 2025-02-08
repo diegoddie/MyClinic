@@ -10,21 +10,27 @@ import {
 import Link from "next/link";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { AppointmentWithRelations } from "@/utils/supabase/actions/appointmentActions";
+import { Spinner } from "../ui/spinner";
 
-export function RecentAppointments({
-  lastFiveAppointments,
+export function FutureAppointments({
+  nextFiveAppointments,
+  isLoading
 }: {
-  lastFiveAppointments: AppointmentWithRelations[];
+  nextFiveAppointments: AppointmentWithRelations[],
+  isLoading?: boolean
 }) {
   return (
-    <Card className="w-full h-full">
+    <Card className="w-full">
       <CardHeader>
-        <Link href="/dashboard/visits">
+        <Link href="/appointments">
           <CardTitle className="hover:underline cursor-pointer text-lg font-bold">
-            Latest Appointments
+            Next Appointments
           </CardTitle>
         </Link>
       </CardHeader>
+      {isLoading ? (
+        <Spinner className="h-6 w-6 text-primary items-center justify-center mx-auto flex mb-4" />
+      ) : (
       <CardContent>
         <ScrollArea className="w-full whitespace-nowrap rounded-md">
           <Table>
@@ -36,14 +42,14 @@ export function RecentAppointments({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {lastFiveAppointments.map((appointment) => (
+              {nextFiveAppointments.map((appointment) => (
                 <TableRow key={appointment.id}>
                   <TableCell>
-                    {appointment.patient.first_name}
+                    {appointment.patient.first_name}{" "}
                     {appointment.patient.last_name}
                   </TableCell>
                   <TableCell>
-                    {appointment.doctor.first_name}
+                    {appointment.doctor.first_name}{" "}
                     {appointment.doctor.last_name}
                   </TableCell>
                   <TableCell>
@@ -57,11 +63,12 @@ export function RecentAppointments({
                   </TableCell>
                 </TableRow>
               ))}
-            </TableBody>
+            </TableBody>            
           </Table>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </CardContent>
+      )}
     </Card>
   );
 }
