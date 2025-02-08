@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "MyClinic",
     images: [
       {
-        url: "https://www.myclinic.tech/favicon.ico", 
+        url: "/MYClinic.png", 
         width: 1200,
         height: 630,
         alt: "MyClinic Logo",
